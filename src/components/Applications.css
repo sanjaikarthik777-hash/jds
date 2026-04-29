@@ -1,0 +1,76 @@
+.applications-section {
+  background-color: var(--bg-secondary);
+}
+
+.applications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2.5rem;
+}
+
+.app-card {
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--bg-tertiary);
+  transition: background 0.3s ease;
+}
+
+.app-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(230, 92, 0, 0.2);
+}
+
+.app-card:hover::before {
+  background: var(--accent-orange);
+}
+
+.app-icon {
+  color: var(--accent-orange);
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.app-card:hover .app-icon {
+  transform: scale(1.1) translateY(-5px);
+  filter: drop-shadow(0 0 10px var(--accent-glow));
+}
+
+.app-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+
+.app-desc {
+  color: var(--text-steel);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Specific Highlight for the requested "Industrial" card style */
+.highlight-card {
+  border-color: rgba(230, 92, 0, 0.4);
+  box-shadow: 0 0 30px rgba(230, 92, 0, 0.05) inset;
+}
+
+.highlight-card::before {
+  background: var(--accent-orange);
+}
