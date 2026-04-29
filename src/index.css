@@ -21,8 +21,7 @@
 
 html, body {
   width: 100%;
-  min-height: 100vh;
-  min-height: 100svh;
+  height: auto;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -36,20 +35,16 @@ body {
   font-size: 1rem;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
-  display: flex;
-  flex-direction: column;
 }
 
 #root {
   width: 100%;
-  flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 .app-container {
   width: 100%;
-  flex: 1;
   display: flex;
   flex-direction: column;
   transition: opacity 1s ease-in-out;
@@ -73,11 +68,17 @@ body {
   width: 100%;
 }
 
-main {
+main, .container, .wrapper {
   flex: 1 0 auto;
   width: 100%;
   display: flex;
   flex-direction: column;
+  min-height: auto !important;
+}
+
+section:last-child {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 h1 {

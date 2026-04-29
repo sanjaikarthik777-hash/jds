@@ -1,6 +1,7 @@
 .hero-section {
   position: relative;
-  height: 100vh;
+  height: auto;
+  min-height: 500px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -70,11 +71,10 @@
 
 @media (max-width: 768px) {
   .hero-section {
-    padding-top: 120px;
-    padding-bottom: 60px;
+    padding-top: 100px;
+    padding-bottom: 40px;
     height: auto;
-    min-height: 100vh;
-    min-height: 100svh;
+    min-height: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
