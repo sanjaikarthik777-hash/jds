@@ -3,13 +3,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { db } from './firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
-import { FaWhatsapp, FaCalculator } from 'react-icons/fa';
+import { FaWhatsapp, FaCalculator, FaPhoneAlt } from 'react-icons/fa';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 
 // Components
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import AboutShort from './components/AboutShort';
 import About from './components/About';
 import Services from './components/Services';
 import Materials from './components/Materials';
@@ -88,6 +89,7 @@ const MainSite = () => {
         <Navbar />
         <main>
           <Hero />
+          <AboutShort />
           <About />
           <Services />
           <Materials />
@@ -121,6 +123,18 @@ const MainSite = () => {
           <QuoteGenerator />
         </div>
         <div className="action-hub" style={{ pointerEvents: 'auto' }}>
+          <motion.a 
+            href="tel:+919043426461"
+            className="hub-pill-premium call-hub"
+            whileHover={{ scale: 1.05, x: -5 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <div className="hub-icon-premium">
+              <FaPhoneAlt size={18} />
+            </div>
+            <span className="hub-label-premium">Call Now</span>
+          </motion.a>
+
           <motion.div 
             className="hub-pill-premium ai-quote-hub"
             whileHover={{ scale: 1.05, x: -5 }}
@@ -130,7 +144,7 @@ const MainSite = () => {
             <div className="hub-icon-premium">
               <FaCalculator size={18} />
             </div>
-            <span className="hub-label-premium">Get AI Quote</span>
+            <span className="hub-label-premium">Instant Quote</span>
           </motion.div>
 
           <a href="https://wa.me/919043426461" target="_blank" rel="noopener noreferrer" className="hub-symbol wa-symbol" title="WhatsApp Us">

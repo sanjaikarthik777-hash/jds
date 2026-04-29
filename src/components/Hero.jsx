@@ -2,6 +2,7 @@ import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
+import { motion, AnimatePresence } from 'framer-motion';
 import { db } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import useIsMobile from '../hooks/useIsMobile';
@@ -55,9 +56,17 @@ const Hero = () => {
   const [content, setContent] = useState({
     heroTitle: '10+ Years of Trusted',
     heroHighlight: 'Grill & Fabrication',
-    heroSubtitle: 'Custom Gates, Railings, and Fabrication Solutions with Quality Craftsmanship'
+    heroSubtitle: 'Custom Gates, Railings, and Fabrication Solutions with over 10 years of quality craftsmanship.'
   });
   const [contact, setContact] = useState({ phone: '9043426461' });
+  const [phraseIndex, setPhraseIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPhraseIndex(prev => (prev === 0 ? 1 : 0));
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const unsubHome = onSnapshot(doc(db, 'settings', 'homepage'), (doc) => {
@@ -100,10 +109,39 @@ const Hero = () => {
           {content.heroSubtitle}
         </p>
         <div className="hero-cta">
-          <a href="#contact" className="btn btn-primary">Get a Quote</a>
-          <a href={`tel:${contact.phone.replace(/[^0-9+]/g, '')}`} className="btn btn-outline">Call Now</a>
+          <a href="#contact" className="btn btn-primary">Get a Free Quote</a>
+          <a href="#gallery" className="btn btn-outline">View Our Work</a>
+        </div>
+
+        <div className="hero-phrases">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={phraseIndex}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.8 }}
+              className="phrase-item"
+            >
+              {phraseIndex === 0 ? "Built to Last" : "Designed to Impress"}
+            </motion.span>
+          </AnimatePresence>
         </div>
       </div>
+
+      <motion.div 
+        className="scroll-hint"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2, duration: 1 }}
+      >
+        <span className="scroll-text">↓ Scroll to explore our work</span>
+        <motion.div 
+          className="scroll-dot"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </motion.div>
     </section>
   );
 };

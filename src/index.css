@@ -223,7 +223,7 @@ ul {
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
-  animation: shimmer 3s infinite linear, pulse-premium 2s infinite ease-in-out;
+  animation: pulse-premium 2s infinite ease-in-out;
   transition: all 0.3s ease;
 }
 
@@ -249,6 +249,16 @@ ul {
   background: #25D366;
   box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
   align-self: flex-end;
+}
+
+.call-hub {
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  box-shadow: 0 10px 30px rgba(30, 60, 114, 0.4);
+}
+
+.hub-symbol:hover {
+  transform: scale(1.1) translateY(-5px);
+  filter: brightness(1.1);
 }
 
 /* Animations */

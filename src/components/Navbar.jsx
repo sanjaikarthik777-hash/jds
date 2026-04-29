@@ -21,7 +21,10 @@ const Navbar = () => {
         <div className="logo">
           <a href="#">
             <img src="/VGW.png" alt="Velmurugan Grill Works Logo" className="brand-logo" />
-            <span className="logo-text">Velmurugan <span className="highlight">Grill Works</span></span>
+            <div className="logo-info">
+              <span className="logo-text">Velmurugan <span className="highlight">Grill Works</span></span>
+              <span className="logo-tagline">Strength. Style. Precision.</span>
+            </div>
           </a>
         </div>
 
@@ -32,7 +35,6 @@ const Navbar = () => {
           <a href="#gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
           <a href="#testimonials" onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
           <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
-          <a href="#contact" className="btn btn-primary nav-btn" onClick={() => setMobileMenuOpen(false)}>Get a Quote</a>
         </nav>
 
         <div className="mobile-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>

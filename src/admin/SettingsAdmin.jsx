@@ -10,7 +10,7 @@ const SettingsAdmin = () => {
   const [homepage, setHomepage] = useState({
     heroTitle: 'CRAFTING EXCELLENCE IN',
     heroHighlight: 'METAL & DESIGN',
-    heroSubtitle: 'Velmurugan Grill Works — Transforming spaces with premium fabrication, robust structures, and aesthetic grill designs for over 25 years.'
+    heroSubtitle: 'Velmurugan Grill Works — Transforming spaces with premium fabrication, robust structures, and aesthetic grill designs for over 10 years.'
   });
 
   const [contact, setContact] = useState({
