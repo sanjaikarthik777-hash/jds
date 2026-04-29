@@ -82,9 +82,11 @@ const MainSite = () => {
           </Suspense>
         </main>
         <Footer />
-        
+      </div>
+
+      {/* Overlays and Floating elements outside main flow */}
+      <div style={{ opacity: introFinished ? 1 : 0, transition: 'opacity 0.5s ease' }}>
         <QuoteGenerator />
-        
         <div className="action-hub">
           <motion.div 
             className="hub-pill-premium ai-quote-hub"
