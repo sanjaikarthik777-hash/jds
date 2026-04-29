@@ -164,22 +164,26 @@
 }
 
 @media (max-width: 480px) {
+  .logo-text {
+    font-size: 0.95rem;
+  }
+
   .logo-text .highlight {
-    display: none;
+    display: inline;
   }
   
   .brand-logo {
-    width: 30px;
-    height: 30px;
-    gap: 6px;
+    width: 28px;
+    height: 28px;
+    gap: 5px;
   }
   
   .logo a {
-    gap: 8px;
+    gap: 6px;
   }
 
   .mobile-toggle {
-    font-size: 1.6rem;
-    padding: 5px;
+    font-size: 1.5rem;
+    padding: 4px;
   }
 }
