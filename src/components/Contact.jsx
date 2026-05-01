@@ -104,38 +104,57 @@ const Contact = () => {
           </div>
           
           {/* Contact Form */}
-          <div className="contact-form-container glass-panel">
-            <h3>Request a Quote</h3>
+          <div className="contact-form-container glass-panel-premium">
+            <div className="form-header">
+              <h3>Get in <span className="text-gradient">Touch</span></h3>
+              <p>Fill out the form and we'll get back to you within 24 hours.</p>
+            </div>
             
             <form className="contact-form" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="name">Your Name</label>
-                <input
-                  type="text" id="name" name="name"
-                  value={formData.name} onChange={handleChange}
-                  required placeholder="Enter your name"
-                />
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="name">Your Name</label>
+                  <input
+                    type="text" id="name" name="name"
+                    value={formData.name} onChange={handleChange}
+                    required placeholder="John Doe"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="phone">Phone Number</label>
+                  <input
+                    type="tel" id="phone" name="phone"
+                    value={formData.phone} onChange={handleChange}
+                    required placeholder="90434XXXXX"
+                    pattern="[0-9]{10}" title="Please enter a valid 10-digit number"
+                  />
+                </div>
               </div>
               <div className="form-group">
-                <label htmlFor="phone">Phone Number</label>
-                <input
-                  type="tel" id="phone" name="phone"
-                  value={formData.phone} onChange={handleChange}
-                  required placeholder="Enter your mobile number"
-                  pattern="[0-9]{10}" title="Please enter a valid 10-digit number"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="message">Project Requirements</label>
+                <label htmlFor="message">Project Details</label>
                 <textarea
                   id="message" name="message"
                   value={formData.message} onChange={handleChange}
-                  required placeholder="Tell us about what you need..." rows="5"
+                  required placeholder="Describe your requirements (e.g., modern gate design, industrial grill work...)" rows="4"
                 ></textarea>
               </div>
-              <button type="submit" className="btn btn-primary submit-btn">
-                <FaWhatsapp size={20} /> Send on WhatsApp
-              </button>
+              
+              <div className="contact-action-group">
+                <button type="submit" className="btn btn-primary submit-btn-wa">
+                  <FaWhatsapp size={18} /> Chat on WhatsApp
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-outline submit-btn-email"
+                  onClick={() => {
+                    const subject = encodeURIComponent(`Inquiry from ${formData.name}`);
+                    const body = encodeURIComponent(`Name: ${formData.name}\nPhone: ${formData.phone}\n\nRequirements:\n${formData.message}`);
+                    window.location.href = `mailto:${contactData.email}?subject=${subject}&body=${body}`;
+                  }}
+                >
+                  <Mail size={18} /> Send Email
+                </button>
+              </div>
             </form>
           </div>
           

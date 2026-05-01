@@ -57,6 +57,12 @@ const TiltCard = ({ service }) => {
 
 const Services = () => {
   const [services, setServices] = useState([]);
+  const defaultServices = [
+    { id: '1', title: 'Grill Fabrication', description: 'Custom architectural grills, safety window grills, and decorative balcony railings crafted with precision.', icon: 'Shield' },
+    { id: '2', title: 'Modern Gates', description: 'Automatic sliding gates, designer main gates, and heavy-duty industrial entrance solutions.', icon: 'DoorOpen' },
+    { id: '3', title: 'Industrial Works', description: 'Structural steel fabrication, shed works, and heavy-duty metal frameworks for industrial plants.', icon: 'Factory' },
+    { id: '4', title: 'Custom Metal Design', description: 'Unique bespoke metal furniture, laser-cut panels, and artistic metal installations for luxury spaces.', icon: 'PenTool' }
+  ];
 
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'services'), (snapshot) => {
@@ -64,7 +70,14 @@ const Services = () => {
         id: doc.id,
         ...doc.data()
       }));
-      setServices(data.sort((a, b) => (a.order || 0) - (b.order || 0)));
+      if (data.length > 0) {
+        setServices(data.sort((a, b) => (a.order || 0) - (b.order || 0)));
+      } else {
+        setServices(defaultServices);
+      }
+    }, (err) => {
+      console.error("Firestore error:", err);
+      setServices(defaultServices);
     });
     return () => unsub();
   }, []);

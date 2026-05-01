@@ -1,0 +1,142 @@
+.gate-section-wrapper {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  background: #000;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  z-index: 40;
+}
+
+.gate-visual-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gate-reveal-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0d0d0f;
+  z-index: 1;
+}
+
+.reveal-text-box {
+  text-align: center;
+  z-index: 2;
+  max-width: 800px;
+  padding: 2rem;
+}
+
+.reveal-text-box h2 {
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+.reveal-divider {
+  width: 80px;
+  height: 4px;
+  background: #C5A059;
+  margin: 0 auto 2rem;
+}
+
+.reveal-text-box p {
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  color: #94a3b8;
+  font-weight: 300;
+}
+
+.gate-panels-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.gate-panel-half {
+  width: 50.5%;
+  height: 100%;
+  background: #111;
+  position: relative;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+}
+
+.left-half {
+  border-right: 2px solid #C5A059;
+}
+
+.right-half {
+  border-left: 2px solid #C5A059;
+}
+
+.gate-panel-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.left-half .gate-panel-inner { justify-content: flex-end; }
+.right-half .gate-panel-inner { justify-content: flex-start; }
+
+.gate-handle-gold {
+  width: 40px;
+  height: 160px;
+  background: linear-gradient(to bottom, #A67C37, #C5A059, #A67C37);
+  position: absolute;
+  z-index: 20;
+}
+
+.handle-left { right: 10px; border-radius: 8px 0 0 8px; }
+.handle-right { left: 10px; border-radius: 0 8px 8px 0; }
+
+.gate-texture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.gate-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.05) 50%, transparent 60%);
+  background-size: 200% 100%;
+  animation: gate-shimmer 6s infinite;
+}
+
+@keyframes gate-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (max-width: 768px) {
+  .gate-section-wrapper { height: 80vh; }
+  .reveal-text-box h2 { font-size: 2.2rem; }
+  .gate-handle-gold { width: 30px; height: 120px; }
+}

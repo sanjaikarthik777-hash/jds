@@ -3,6 +3,112 @@
    Velmurugan Grill Works
    ═══════════════════════════════════════════════════════ */
 
+.ba-showcase-section {
+  margin-bottom: 6rem;
+  background: rgba(26, 26, 29, 0.4);
+  padding: 3rem;
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ba-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.ba-header h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.ba-header p {
+  color: #94a3b8;
+}
+
+.ba-container {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  cursor: ew-resize;
+}
+
+.ba-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.ba-slider-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #C5A059;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.ba-slider-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background: #C5A059;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(197, 160, 89, 0.5);
+}
+
+.ba-labels {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30px;
+  z-index: 11;
+  pointer-events: none;
+}
+
+.ba-label {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 6px 16px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .ba-showcase-section {
+    padding: 1.5rem;
+    margin-bottom: 4rem;
+  }
+  
+  .ba-container {
+    aspect-ratio: 4 / 3;
+  }
+}
+
 .gallery-section {
   position: relative;
   background: var(--bg-primary);

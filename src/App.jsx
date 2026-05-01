@@ -23,6 +23,7 @@ import AdminRoutes from './routes/AdminRoutes';
 import QuoteGenerator from './components/QuoteGenerator';
 import CostCalculator from './components/CostCalculator';
 import ScrollToTop from './components/ScrollToTop';
+import GateTransition from './components/GateTransition';
 
 // Lazy Loaded Components
 const Gallery = React.lazy(() => import('./components/Gallery'));
@@ -90,6 +91,7 @@ const MainSite = () => {
         <Navbar />
         <main>
           <Hero />
+          <GateTransition />
           <AboutShort />
           <About />
           <Services />

@@ -1,8 +1,74 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, X, Maximize2, Sparkles } from 'lucide-react';
 import { db } from '../firebase';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import './Gallery.css';
+import gateBeforeDefault from '../assets/gate-before.png';
+import gateAfterDefault from '../assets/gate-after.png';
+
+const BeforeAfter = () => {
+  const [sliderPos, setSliderPos] = useState(50);
+  const [spotlight, setSpotlight] = useState({
+    beforeUrl: gateBeforeDefault,
+    afterUrl: gateAfterDefault,
+    title: 'Transformation Spotlight',
+    subtitle: 'See how we turn outdated structures into modern masterpieces'
+  });
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const fetchSpotlight = async () => {
+      try {
+        const docRef = doc(db, 'settings', 'transformation_spotlight');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setSpotlight(prev => ({ ...prev, ...docSnap.data() }));
+        }
+      } catch (err) { console.error(err); }
+    };
+    fetchSpotlight();
+  }, []);
+
+  const handleMove = (e) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = (e.clientX || e.touches[0].clientX) - rect.left;
+    const position = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    setSliderPos(position);
+  };
+
+  return (
+    <div className="ba-showcase-section">
+      <div className="ba-header">
+        <h3>{spotlight.title.split(' ')[0]} <span className="text-gradient">{spotlight.title.split(' ').slice(1).join(' ')}</span></h3>
+        <p>{spotlight.subtitle}</p>
+      </div>
+      <div className="ba-container" 
+        ref={containerRef}
+        onMouseMove={handleMove}
+        onTouchMove={handleMove}
+      >
+        <div className="ba-image after-image" style={{ backgroundImage: `url(${spotlight.afterUrl})` }}></div>
+        <div className="ba-image before-image" 
+          style={{ 
+            backgroundImage: `url(${spotlight.beforeUrl})`,
+            clipPath: `inset(0 ${100 - sliderPos}% 0 0)`
+          }}
+        ></div>
+        <div className="ba-slider-line" style={{ left: `${sliderPos}%` }}>
+          <div className="ba-slider-button">
+            <ChevronLeft size={16} />
+            <ChevronRight size={16} />
+          </div>
+        </div>
+        <div className="ba-labels">
+          <span className="ba-label before">BEFORE</span>
+          <span className="ba-label after">AFTER</span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ITEMS_PER_PAGE = 6;
 
@@ -126,6 +192,9 @@ const Gallery = () => {
             Explore {galleryItems.length} handcrafted metalwork projects — from ornate gates to precision-engineered structures
           </p>
         </div>
+
+        {/* Before/After Showcase */}
+        <BeforeAfter />
 
         {/* Search and Advanced Filters */}
         <div className="gallery-filters-row">

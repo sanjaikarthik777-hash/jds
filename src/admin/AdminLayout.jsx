@@ -11,7 +11,8 @@ import {
   LogOut,
   ExternalLink,
   ChevronRight,
-  Zap
+  Zap,
+  Sparkles
 } from 'lucide-react';
 import * as THREE from 'three';
 import ownerImg from '../OWNER.jpeg';
@@ -260,6 +261,7 @@ const AdminLayout = () => {
     { path: '/admin/dashboard', icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
     { path: '/admin/leads',     icon: <MessageSquare size={18} />,   label: 'Leads'     },
     { path: '/admin/gallery',   icon: <ImageIcon size={18} />,       label: 'Gallery'   },
+    { path: '/admin/transform', icon: <Sparkles size={18} />,        label: 'Spotlight' },
     { path: '/admin/services',  icon: <List size={18} />,            label: 'Services'  },
     { path: '/admin/testimonials', icon: <MessageSquare size={18} />, label: 'Testimonials' },
     { path: '/admin/settings',  icon: <Settings size={18} />,        label: 'Settings'  },

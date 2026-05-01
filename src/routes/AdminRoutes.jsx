@@ -11,6 +11,7 @@ import ServicesAdmin from '../admin/ServicesAdmin';
 import TestimonialsAdmin from '../admin/TestimonialsAdmin';
 import GalleryAdmin from '../admin/GalleryAdmin';
 import LeadsAdmin from '../admin/LeadsAdmin';
+import TransformAdmin from '../admin/TransformAdmin';
 
 const AdminRoutes = () => {
   return (
@@ -25,6 +26,7 @@ const AdminRoutes = () => {
         <Route path="services" element={<ServicesAdmin />} />
         <Route path="testimonials" element={<TestimonialsAdmin />} />
         <Route path="gallery" element={<GalleryAdmin />} />
+        <Route path="transform" element={<TransformAdmin />} />
         {/* Default redirect to dashboard */}
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </Route>

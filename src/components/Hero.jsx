@@ -51,12 +51,14 @@ const GrillStructure = ({ isMobile }) => {
 
 
 
+import heroBg from '../assets/hero-bg.png';
+
 const Hero = () => {
   const isMobile = useIsMobile();
   const [content, setContent] = useState({
-    heroTitle: '10+ Years of Trusted',
-    heroHighlight: 'Grill & Fabrication',
-    heroSubtitle: 'Custom Gates, Railings, and Fabrication Solutions with over 10 years of quality craftsmanship.'
+    heroTitle: 'Premium Metal',
+    heroHighlight: 'Fabrication & Design',
+    heroSubtitle: 'Transforming industrial visions into metallic reality with 10+ years of expert craftsmanship in gates, grills, and structural works.'
   });
   const [contact, setContact] = useState({ phone: '9043426461' });
   const [phraseIndex, setPhraseIndex] = useState(0);
@@ -80,38 +82,61 @@ const Hero = () => {
 
   return (
     <section id="hero" className="hero-section">
-      <div className="canvas-container">
+      <div className="hero-background">
+        <img src={heroBg} alt="Industrial Workshop" className="hero-bg-image" />
+        <div className="hero-overlay"></div>
+      </div>
+
+      <div className="canvas-container" style={{ opacity: 0.4 }}>
         <Canvas 
           camera={{ position: [0, 0, 8], fov: 45 }}
-          dpr={isMobile ? [1, 1.5] : [1, 2]} // Cap pixel ratio on mobile
+          dpr={isMobile ? [1, 1.5] : [1, 2]}
           gl={{ 
             powerPreference: 'high-performance',
-            antialias: !isMobile, // Disable antialiasing on mobile for better performance
-            alpha: false
+            antialias: !isMobile,
+            alpha: true
           }}
         >
           <fog attach="fog" args={['#0D0D0F', 5, 20]} />
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1.5} color="#ffffff" />
-          
-          {/* Reduced light sources on mobile */}
           <GrillStructure isMobile={isMobile} />
           <Environment preset="night" />
         </Canvas>
       </div>
 
       <div className="hero-content container">
-        <h1 className="hero-title">
-          {content.heroTitle} <br/>
-          <span className="text-gradient">{content.heroHighlight}</span> <br/>
-        </h1>
-        <p className="hero-subtitle">
-          {content.heroSubtitle}
-        </p>
-        <div className="hero-cta">
-          <a href="#contact" className="btn btn-primary">Get a Free Quote</a>
-          <a href="#gallery" className="btn btn-outline">View Our Work</a>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="hero-title">
+            {content.heroTitle} <br/>
+            <span className="text-gradient">{content.heroHighlight}</span>
+          </h1>
+          <p className="hero-subtitle">
+            {content.heroSubtitle}
+          </p>
+          <div className="hero-cta">
+            <motion.button 
+              className="btn btn-primary btn-lg"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => document.dispatchEvent(new CustomEvent('openQuoteGenerator'))}
+            >
+              Get Instant Quote
+            </motion.button>
+            <motion.a 
+              href="#gallery" 
+              className="btn btn-outline btn-lg"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Explore Our Work
+            </motion.a>
+          </div>
+        </motion.div>
 
         <div className="hero-phrases">
           <AnimatePresence mode="wait">
@@ -123,7 +148,7 @@ const Hero = () => {
               transition={{ duration: 0.8 }}
               className="phrase-item"
             >
-              {phraseIndex === 0 ? "Built to Last" : "Designed to Impress"}
+              {phraseIndex === 0 ? "Precision Engineering" : "Industrial Excellence"}
             </motion.span>
           </AnimatePresence>
         </div>
@@ -135,7 +160,7 @@ const Hero = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 2, duration: 1 }}
       >
-        <span className="scroll-text">↓ Scroll to explore our work</span>
+        <span className="scroll-text">↓ Scroll to see the magic</span>
         <motion.div 
           className="scroll-dot"
           animate={{ y: [0, 8, 0] }}
