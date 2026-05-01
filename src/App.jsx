@@ -22,6 +22,7 @@ import Intro from './components/Intro';
 import AdminRoutes from './routes/AdminRoutes';
 import QuoteGenerator from './components/QuoteGenerator';
 import CostCalculator from './components/CostCalculator';
+import ScrollToTop from './components/ScrollToTop';
 
 // Lazy Loaded Components
 const Gallery = React.lazy(() => import('./components/Gallery'));
@@ -150,6 +151,8 @@ const MainSite = () => {
           <a href="https://wa.me/919043426461" target="_blank" rel="noopener noreferrer" className="hub-symbol wa-symbol" title="WhatsApp Us">
             <FaWhatsapp size={26} />
           </a>
+
+          <ScrollToTop />
         </div>
       </div>
     </>
