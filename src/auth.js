@@ -4,7 +4,7 @@
  *
  * Admin credentials:
  *   Username: admin
- *   Password: jds2025admin
+ *   Password: jds admin
  */
 
 const SESSION_KEY = 'jds_admin_auth';
@@ -12,7 +12,7 @@ const SESSION_KEY = 'jds_admin_auth';
 const ADMIN_CREDENTIALS = {
   username: 'admin',
   // Change this password as needed
-  password: 'jds2025admin',
+  password: 'jds admin'
 };
 
 export const login = (username, password) => {
