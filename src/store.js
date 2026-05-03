@@ -37,7 +37,23 @@ const write = (key, value) => {
 
 // ── Gallery ───────────────────────────────────────────────────────────────────
 
-export const getGallery = () => read(KEYS.gallery);
+const DEFAULT_GALLERY = [
+  { id: '1', title: 'Industrial Flat Bar', description: 'High-strength steel flat bars for structural applications.', category: 'flat', mediaType: 'image', imageUrl: '/gallery/flat.png' },
+  { id: '2', title: 'Precision Round Bar', description: 'Engineered round bars for manufacturing and machining.', category: 'roundbar', mediaType: 'image', imageUrl: '/gallery/roundbar.png' },
+  { id: '3', title: 'Solid Square Steel', description: 'Durable square steel profiles for robust constructions.', category: 'square', mediaType: 'image', imageUrl: '/gallery/square.png' },
+  { id: '4', title: 'Steel Round Rods', description: 'Versatile steel rods for reinforced concrete and general use.', category: 'roundrod', mediaType: 'image', imageUrl: '/gallery/roundrod.png' },
+  { id: '5', title: 'Factory Operations', description: 'A glimpse into our state-of-the-art facilities.', category: 'all', mediaType: 'video', imageUrl: '/gallery/VIDEO1.mp4' },
+  { id: '6', title: 'Manufacturing Process', description: 'Precision cutting and shaping in action.', category: 'all', mediaType: 'video', imageUrl: '/gallery/VIDEO2.mp4' }
+];
+
+export const getGallery = () => {
+  const items = read(KEYS.gallery);
+  if (!items || items.length === 0) {
+    write(KEYS.gallery, DEFAULT_GALLERY);
+    return DEFAULT_GALLERY;
+  }
+  return items;
+};
 
 export const addGalleryItem = (item) => {
   const items = read(KEYS.gallery);
