@@ -34,20 +34,30 @@ const Navbar = () => {
           </a>
         </div>
 
+        <div className={`mobile-overlay ${mobileMenuOpen ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}></div>
+        
         <nav className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
-          <a href="#about" className="active" onClick={() => setMobileMenuOpen(false)}>About</a>
-          <a href="#products" onClick={() => setMobileMenuOpen(false)}>Products</a>
-          <a href="#materials" onClick={() => setMobileMenuOpen(false)}>Materials</a>
-          <a href="#gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
-          <a href="#testimonials" onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
-          <a href="#contact" className="nav-contact-btn" onClick={() => setMobileMenuOpen(false)}>
-            <Phone size={14} />
-            Contact
-          </a>
+          <div className="mobile-drawer-header">
+            <span className="drawer-title">Menu</span>
+            <button className="mobile-close" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">
+              <X size={28} />
+            </button>
+          </div>
+          <div className="drawer-links">
+            <a href="#about" className="active" onClick={() => setMobileMenuOpen(false)}>About</a>
+            <a href="#products" onClick={() => setMobileMenuOpen(false)}>Products</a>
+            <a href="#materials" onClick={() => setMobileMenuOpen(false)}>Materials</a>
+            <a href="#gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
+            <a href="#testimonials" onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
+            <a href="#contact" className="nav-contact-btn" onClick={() => setMobileMenuOpen(false)}>
+              <Phone size={14} />
+              Contact
+            </a>
+          </div>
         </nav>
 
-        <div className="mobile-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+        <div className="mobile-toggle" onClick={() => setMobileMenuOpen(true)}>
+          <Menu size={28} />
         </div>
       </div>
     </header>
