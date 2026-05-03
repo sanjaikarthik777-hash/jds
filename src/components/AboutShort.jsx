@@ -19,9 +19,8 @@ const AboutShort = () => {
           </div>
           <div className="about-short-body">
             <p>
-              Velmurugan Grill Works is a trusted name in metal fabrication and grill design. 
-              With years of expertise, we deliver customized solutions tailored to your space, 
-              ensuring durability, security, and visual appeal.
+              JDS Iron and Steels is a leading supplier of tool, alloy, and carbon steels, specializing in custom forgings and high-precision CNC cutting. 
+              We are committed to providing premium metal solutions with a focus on quality, precision, and building long-term partnerships with our industrial clients.
             </p>
           </div>
         </motion.div>

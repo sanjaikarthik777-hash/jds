@@ -7,11 +7,10 @@ import Login from '../admin/Login';
 
 // Placeholders for components we'll build next
 import SettingsAdmin from '../admin/SettingsAdmin';
-import ServicesAdmin from '../admin/ServicesAdmin';
 import TestimonialsAdmin from '../admin/TestimonialsAdmin';
 import GalleryAdmin from '../admin/GalleryAdmin';
 import LeadsAdmin from '../admin/LeadsAdmin';
-import TransformAdmin from '../admin/TransformAdmin';
+import ProductsAdmin from '../admin/ServicesAdmin';
 
 const AdminRoutes = () => {
   return (
@@ -23,10 +22,9 @@ const AdminRoutes = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="leads" element={<LeadsAdmin />} />
         <Route path="settings" element={<SettingsAdmin />} />
-        <Route path="services" element={<ServicesAdmin />} />
         <Route path="testimonials" element={<TestimonialsAdmin />} />
         <Route path="gallery" element={<GalleryAdmin />} />
-        <Route path="transform" element={<TransformAdmin />} />
+        <Route path="products" element={<ProductsAdmin />} />
         {/* Default redirect to dashboard */}
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </Route>

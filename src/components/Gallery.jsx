@@ -1,89 +1,21 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { ChevronLeft, ChevronRight, X, Maximize2, Sparkles } from 'lucide-react';
-import { db } from '../firebase';
-import { collection, onSnapshot, doc, getDoc } from 'firebase/firestore';
+import { ChevronLeft, ChevronRight, X, Maximize2, Sparkles, Play } from 'lucide-react';
+import { getGallery } from '../store';
 import './Gallery.css';
-import gateBeforeDefault from '../assets/gate-before.png';
-import gateAfterDefault from '../assets/gate-after.png';
-
-const BeforeAfter = () => {
-  const [sliderPos, setSliderPos] = useState(50);
-  const [spotlight, setSpotlight] = useState({
-    beforeUrl: gateBeforeDefault,
-    afterUrl: gateAfterDefault,
-    title: 'Transformation Spotlight',
-    subtitle: 'See how we turn outdated structures into modern masterpieces'
-  });
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    const fetchSpotlight = async () => {
-      try {
-        const docRef = doc(db, 'settings', 'transformation_spotlight');
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setSpotlight(prev => ({ ...prev, ...docSnap.data() }));
-        }
-      } catch (err) { console.error(err); }
-    };
-    fetchSpotlight();
-  }, []);
-
-  const handleMove = (e) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = (e.clientX || e.touches[0].clientX) - rect.left;
-    const position = Math.max(0, Math.min(100, (x / rect.width) * 100));
-    setSliderPos(position);
-  };
-
-  return (
-    <div className="ba-showcase-section">
-      <div className="ba-header">
-        <h3>{spotlight.title.split(' ')[0]} <span className="text-gradient">{spotlight.title.split(' ').slice(1).join(' ')}</span></h3>
-        <p>{spotlight.subtitle}</p>
-      </div>
-      <div className="ba-container" 
-        ref={containerRef}
-        onMouseMove={handleMove}
-        onTouchMove={handleMove}
-      >
-        <div className="ba-image after-image" style={{ backgroundImage: `url(${spotlight.afterUrl})` }}></div>
-        <div className="ba-image before-image" 
-          style={{ 
-            backgroundImage: `url(${spotlight.beforeUrl})`,
-            clipPath: `inset(0 ${100 - sliderPos}% 0 0)`
-          }}
-        ></div>
-        <div className="ba-slider-line" style={{ left: `${sliderPos}%` }}>
-          <div className="ba-slider-button">
-            <ChevronLeft size={16} />
-            <ChevronRight size={16} />
-          </div>
-        </div>
-        <div className="ba-labels">
-          <span className="ba-label before">BEFORE</span>
-          <span className="ba-label after">AFTER</span>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const ITEMS_PER_PAGE = 6;
 
 const fixedCategories = [
-  { id: 'all', label: 'All Projects', icon: '✨' },
-  { id: 'gates', label: 'Gates & Fences', icon: '⛩️' },
-  { id: 'sheds', label: 'Industrial Sheds', icon: '🏭' },
-  { id: 'railings', label: 'Stair Railings', icon: '🪜' },
-  { id: 'custom', label: 'Custom Fabrication', icon: '⚙️' }
+  { id: 'all', label: 'All Products', icon: '📦' },
+  { id: 'flat', label: 'Flats', icon: '➖' },
+  { id: 'roundbar', label: 'Round Bar', icon: '📏' },
+  { id: 'roundrod', label: 'Round Rod', icon: '⭕' },
+  { id: 'square', label: 'Square', icon: '⬛' }
 ];
 
 const Gallery = () => {
   const [galleryItems, setGalleryItems] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
-  const [activeMaterial, setActiveMaterial] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [lightbox, setLightbox] = useState({ open: false, index: 0 });
@@ -92,23 +24,16 @@ const Gallery = () => {
   const tabsRef = useRef(null);
 
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, 'gallery'), (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setGalleryItems(data.sort((a, b) => b.timestamp?.toMillis() - a.timestamp?.toMillis()));
-    });
-    return () => unsub();
+    const data = getGallery();
+    setGalleryItems(data);
   }, []);
 
   const filteredImages = galleryItems.filter(item => {
     const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
-    const matchesMaterial = activeMaterial === 'all' || item.material === activeMaterial;
     const matchesSearch = !searchQuery || 
       (item.title?.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (item.description?.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesMaterial && matchesSearch;
+    return matchesCategory && matchesSearch;
   });
 
   const category = fixedCategories.find(c => c.id === activeCategory);
@@ -134,7 +59,7 @@ const Gallery = () => {
       tabIndicatorRef.current.style.transform = `translateX(${offsetLeft}px) scale(1.02)`;
       tabIndicatorRef.current.style.width = `${offsetWidth}px`;
     }
-  }, [activeCategory, galleryItems.length]); // added galleryItems to re-trigger if needed
+  }, [activeCategory, galleryItems.length]);
 
   const nextPage = () => {
     setCurrentPage(p => (p + 1) % totalPages);
@@ -177,9 +102,6 @@ const Gallery = () => {
 
   return (
     <section id="gallery" className="section gallery-section">
-      {/* Decorative background elements */}
-
-
       <div className="container">
         {/* Section Header */}
         <div className="gallery-hero-header">
@@ -189,33 +111,19 @@ const Gallery = () => {
           </div>
           <h2 className="gallery-main-title">Our Finest <span className="text-gradient">Craftsmanship</span></h2>
           <p className="gallery-description">
-            Explore {galleryItems.length} handcrafted metalwork projects — from ornate gates to precision-engineered structures
+            Explore {galleryItems.length} high-quality industrial products — from precision-engineered bars to custom steel sections
           </p>
         </div>
-
-        {/* Before/After Showcase */}
-        <BeforeAfter />
 
         {/* Search and Advanced Filters */}
         <div className="gallery-filters-row">
           <div className="search-box">
             <input 
               type="text" 
-              placeholder="Search projects..." 
+              placeholder="Search products..." 
               value={searchQuery}
               onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(0); }}
             />
-          </div>
-          <div className="material-filters">
-            {['all', 'MS', 'SS', 'Aluminium', 'Wood'].map(m => (
-              <button 
-                key={m}
-                className={`material-chip ${activeMaterial === m ? 'active' : ''}`}
-                onClick={() => { setActiveMaterial(m); setCurrentPage(0); }}
-              >
-                {m === 'all' ? 'All Materials' : m}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -255,11 +163,22 @@ const Gallery = () => {
               style={{ '--delay': `${index * 0.08}s` }}
             >
               <div className="card-image-wrap">
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  loading="lazy"
-                />
+                {item.mediaType === 'video' ? (
+                  <>
+                    <video src={item.imageUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted preload="metadata" />
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', pointerEvents: 'none' }}>
+                      <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(0,242,255,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Play size={20} fill="#000" color="#000" />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.title}
+                    loading="lazy"
+                  />
+                )}
               </div>
               <div className="card-hover-overlay">
                 <div className="card-hover-ring">
@@ -315,11 +234,21 @@ const Gallery = () => {
               </button>
 
               <div className="lb-img-frame">
-                <img
-                  key={lightbox.index}
-                  src={filteredImages[lightbox.index]?.imageUrl}
-                  alt={filteredImages[lightbox.index]?.title}
-                />
+                {filteredImages[lightbox.index]?.mediaType === 'video' ? (
+                  <video
+                    key={lightbox.index}
+                    src={filteredImages[lightbox.index]?.imageUrl}
+                    controls
+                    autoPlay
+                    style={{ maxHeight: '60vh', maxWidth: '100%', borderRadius: '12px', background: '#000' }}
+                  />
+                ) : (
+                  <img
+                    key={lightbox.index}
+                    src={filteredImages[lightbox.index]?.imageUrl}
+                    alt={filteredImages[lightbox.index]?.title}
+                  />
+                )}
               </div>
 
               <button className="lb-arrow lb-arrow-right" onClick={lightboxNext} aria-label="Next">
@@ -340,7 +269,13 @@ const Gallery = () => {
                     className={`lb-thumb ${realIndex === lightbox.index ? 'active' : ''}`}
                     onClick={() => setLightbox(lb => ({ ...lb, index: realIndex }))}
                   >
-                    <img src={item.imageUrl} alt="" loading="lazy" />
+                    {item.mediaType === 'video' ? (
+                      <div style={{ width: '100%', height: '100%', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6 }}>
+                        <Play size={16} color="#00f2ff" fill="#00f2ff" />
+                      </div>
+                    ) : (
+                      <img src={item.imageUrl} alt="" loading="lazy" />
+                    )}
                   </button>
                 );
               })}

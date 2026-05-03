@@ -33,9 +33,9 @@
   letter-spacing: 0.05em;
 }
 
-.intro-logo-v { color: #C5A059; animation: letterPop 0.5s ease 0.1s both; }
-.intro-logo-g { color: #F4F4F5; animation: letterPop 0.5s ease 0.25s both; }
-.intro-logo-w { color: #C5A059; animation: letterPop 0.5s ease 0.4s both; }
+.intro-logo-j { color: var(--accent-primary); animation: letterPop 0.5s ease 0.1s both; }
+.intro-logo-d { color: #F4F4F5; animation: letterPop 0.5s ease 0.25s both; }
+.intro-logo-s { color: var(--accent-primary); animation: letterPop 0.5s ease 0.4s both; }
 
 @keyframes letterPop {
   from { opacity: 0; transform: translateY(20px) scale(0.8); }
@@ -67,7 +67,7 @@
 .intro-tagline {
   font-family: var(--font-primary, sans-serif);
   font-size: clamp(0.8rem, 2vw, 1.2rem);
-  color: #C5A059;
+  color: var(--accent-primary);
   letter-spacing: 1px;
   text-shadow: 0 2px 5px rgba(0,0,0,0.8);
   opacity: 0;

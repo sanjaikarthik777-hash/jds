@@ -3,9 +3,8 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Text, Float } from '@react-three/drei';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { db } from '../firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
-import ownerImage from '../OWNER.jpeg';
+import { getSettings } from '../store';
+import { User } from 'lucide-react';
 import useIsMobile from '../hooks/useIsMobile';
 import './About.css';
 
@@ -29,11 +28,11 @@ const Badge3D = () => {
         <mesh ref={outerRef}>
           <icosahedronGeometry args={[2.2, 1]} />
           <meshStandardMaterial 
-            color="#C5A059" 
+            color="#00F2FF" 
             wireframe 
             transparent 
             opacity={0.4} 
-            emissive="#C5A059" 
+            emissive="#00F2FF" 
             emissiveIntensity={0.5}
           />
         </mesh>
@@ -43,13 +42,13 @@ const Badge3D = () => {
           <Text
             position={[0, 0.35, 0]}
             fontSize={0.55}
-            color="#C5A059"
+            color="#00F2FF"
             anchorX="center"
             anchorY="center"
             fontWeight="bold"
             letterSpacing={0.05}
           >
-            10 YEARS
+            20+ YEARS
           </Text>
           <Text
             position={[0, -0.3, 0]}
@@ -73,16 +72,14 @@ const About = () => {
   const textRef = useRef(null);
   const ownerRef = useRef(null);
   const [aboutText, setAboutText] = useState(
-    "Based in Coimbatore, Tamil Nadu, Velmurugan Grill Works has been a trusted name in the grill and fabrication industry for over a decade. We specialize in custom gates, railings, window grills, and complex metal fabrication solutions.\n\nOur industrial expertise combined with high-quality materials ensures durability and aesthetics. From residential to commercial projects, we bring your vision to life with unparalleled precision and care."
+    "Welcome to J D S Iron & Steel. We are glad to introduce our company JDS IRON AND STEELS. We deal in tool and alloy steels, carbon steels such as EN-8, EN-9, EN-19, EN-24, EN-31, EN-36, EN-47, EN-41B, HCHCR, D-2, D-3, HDS, H-11, H-13, HSS, Silver Steel, 16MNCR-5, 20MNCR-5, 8620, P-20, C-45 and all EN, AISI and DIN series.\n\nWe also supply forgings in round, flat, and square sections, along with MS bright bars. We have CNC cutting facilities up to 450 mm and provide cutting sizes as per client requirements.\n\nWe offer solid round, flat, square, hexagon and flat sizes up to 405*155 mm, round bars up to 450 mm, and square bars up to 310-310 mm. We are committed to providing high-quality products at competitive prices and aim to build long-term business relationships with our clients."
   );
 
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, 'settings', 'homepage'), (doc) => {
-      if (doc.exists() && doc.data().aboutText) {
-        setAboutText(doc.data().aboutText);
-      }
-    });
-    return () => unsub();
+    const settings = getSettings();
+    if (settings.homepage && settings.homepage.aboutText) {
+      setAboutText(settings.homepage.aboutText);
+    }
   }, []);
 
   useEffect(() => {
@@ -148,12 +145,12 @@ const About = () => {
             ))}
             
             <div className="owner-profile glass-panel" ref={ownerRef}>
-              <div className="owner-image-placeholder">
-                <img src={ownerImage} alt="Sathish Kumar" loading="lazy" />
+              <div className="owner-image-placeholder" style={{ background: '#1a1a24', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <User size={40} color="#00F2FF" />
               </div>
               <div className="owner-info">
-                <h4>Sathish Kumar</h4>
-                <span className="owner-role">Founder & Lead Fabricator</span>
+                <h4>Sailesh Purohit</h4>
+                <span className="owner-role">Founder & Managing Director</span>
                 <p>"Quality isn't just an act, it's our habit. We build structures that last a lifetime."</p>
               </div>
             </div>

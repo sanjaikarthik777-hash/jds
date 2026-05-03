@@ -35,15 +35,15 @@
 
 .app-card:hover {
   transform: translateY(-5px);
-  border-color: rgba(230, 92, 0, 0.2);
+  border-color: rgba(0, 242, 255, 0.2);
 }
 
 .app-card:hover::before {
-  background: var(--accent-orange);
+  background: var(--accent-primary);
 }
 
 .app-icon {
-  color: var(--accent-orange);
+  color: var(--accent-primary);
   margin-bottom: 1.5rem;
   transition: transform 0.3s ease;
 }
@@ -67,12 +67,12 @@
 
 /* Specific Highlight for the requested "Industrial" card style */
 .highlight-card {
-  border-color: rgba(230, 92, 0, 0.4);
-  box-shadow: 0 0 30px rgba(230, 92, 0, 0.05) inset;
+  border-color: rgba(0, 242, 255, 0.4);
+  box-shadow: 0 0 30px rgba(0, 242, 255, 0.05) inset;
 }
 
 .highlight-card::before {
-  background: var(--accent-orange);
+  background: var(--accent-primary);
 }
 @media (max-width: 768px) {
   .applications-grid {

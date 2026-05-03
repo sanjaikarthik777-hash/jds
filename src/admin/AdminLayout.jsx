@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { signOut } from 'firebase/auth';
-import { auth } from '../firebase';
+import { logout } from '../auth';
 import {
   LayoutDashboard,
   Image as ImageIcon,
@@ -12,10 +11,11 @@ import {
   ExternalLink,
   ChevronRight,
   Zap,
-  Sparkles
+  Sparkles,
+  User
 } from 'lucide-react';
 import * as THREE from 'three';
-import ownerImg from '../OWNER.jpeg';
+import logoImg from '../assets/logo.jpg';
 
 /* ─── Three.js animated background ─── */
 const ThreeBg = () => {
@@ -42,14 +42,14 @@ const ThreeBg = () => {
     const geo = new THREE.BufferGeometry();
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
-    const gold = new THREE.Color('#c5a059');
-    const blue = new THREE.Color('#1e3a5f');
+    const cyan = new THREE.Color('#00F2FF');
+    const blue = new THREE.Color('#3B82F6');
 
     for (let i = 0; i < count; i++) {
       pos[i * 3]     = (Math.random() - 0.5) * 24;
       pos[i * 3 + 1] = (Math.random() - 0.5) * 14;
       pos[i * 3 + 2] = (Math.random() - 0.5) * 10;
-      const c = Math.random() > 0.6 ? gold : blue;
+      const c = Math.random() > 0.6 ? cyan : blue;
       col[i * 3]     = c.r;
       col[i * 3 + 1] = c.g;
       col[i * 3 + 2] = c.b;
@@ -70,7 +70,7 @@ const ThreeBg = () => {
     /* — Wireframe torus knot — */
     const torusGeo = new THREE.TorusKnotGeometry(1.6, 0.38, 120, 18);
     const torusMat = new THREE.MeshBasicMaterial({
-      color: '#c5a059',
+      color: '#00F2FF',
       wireframe: true,
       transparent: true,
       opacity: 0.07
@@ -82,7 +82,7 @@ const ThreeBg = () => {
     /* — Icosahedron — */
     const icoGeo = new THREE.IcosahedronGeometry(1.1, 1);
     const icoMat = new THREE.MeshBasicMaterial({
-      color: '#1e3a5f',
+      color: '#3B82F6',
       wireframe: true,
       transparent: true,
       opacity: 0.12
@@ -147,14 +147,14 @@ const OwnerCard = () => {
         padding: '1rem',
         borderRadius: '14px',
         background: hovered
-          ? 'linear-gradient(135deg,rgba(197,160,89,0.18),rgba(30,58,95,0.25))'
+          ? 'linear-gradient(135deg,rgba(0,242,255,0.18),rgba(59,130,246,0.25))'
           : 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(197,160,89,0.18)',
+        border: '1px solid rgba(0,242,255,0.18)',
         display: 'flex',
         alignItems: 'center',
         gap: '0.8rem',
         transition: 'all 0.4s ease',
-        boxShadow: hovered ? '0 0 20px rgba(197,160,89,0.15)' : 'none',
+        boxShadow: hovered ? '0 0 20px rgba(0,242,255,0.15)' : 'none',
         cursor: 'default'
       }}
     >
@@ -162,20 +162,21 @@ const OwnerCard = () => {
         position: 'relative',
         flexShrink: 0
       }}>
-        <img
-          src={ownerImg}
-          alt="Owner"
-          style={{
-            width: 46,
-            height: 46,
-            borderRadius: '50%',
-            objectFit: 'cover',
-            border: '2px solid #c5a059',
-            boxShadow: '0 0 12px rgba(197,160,89,0.5)',
-            transition: 'transform 0.4s ease',
-            transform: hovered ? 'scale(1.08)' : 'scale(1)'
-          }}
-        />
+        <div style={{
+          width: 46,
+          height: 46,
+          borderRadius: '50%',
+          background: 'rgba(0,242,255,0.1)',
+          border: '2px solid #00f2ff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 0 12px rgba(0,242,255,0.5)',
+          transition: 'transform 0.4s ease',
+          transform: hovered ? 'scale(1.08)' : 'scale(1)'
+        }}>
+          <User size={24} color="#00f2ff" />
+        </div>
         <span style={{
           position: 'absolute',
           bottom: 1,
@@ -188,8 +189,8 @@ const OwnerCard = () => {
         }} />
       </div>
       <div>
-        <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.85rem' }}>Sathish Kumar</div>
-        <div style={{ color: '#c5a059', fontSize: '0.72rem', fontWeight: 500 }}>
+        <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.85rem' }}>Sailesh Purohit</div>
+        <div style={{ color: '#00f2ff', fontSize: '0.72rem', fontWeight: 500 }}>
           Admin · Owner
         </div>
       </div>
@@ -210,7 +211,7 @@ const NavItem = ({ item }) => {
         alignItems: 'center',
         gap: '0.75rem',
         padding: '0.75rem 1rem',
-        color: isActive ? '#c5a059' : hov ? '#e2c98a' : '#94a3b8',
+        color: isActive ? '#00f2ff' : hov ? '#7dd3fc' : '#94a3b8',
         textDecoration: 'none',
         borderRadius: '10px',
         transition: 'all 0.3s ease',
@@ -219,12 +220,12 @@ const NavItem = ({ item }) => {
         position: 'relative',
         overflow: 'hidden',
         background: isActive
-          ? 'linear-gradient(90deg,rgba(197,160,89,0.18),rgba(197,160,89,0.05))'
+          ? 'linear-gradient(90deg,rgba(0,242,255,0.18),rgba(0,242,255,0.05))'
           : hov
           ? 'rgba(255,255,255,0.05)'
           : 'transparent',
-        borderLeft: isActive ? '3px solid #c5a059' : '3px solid transparent',
-        boxShadow: isActive ? '0 0 15px rgba(197,160,89,0.12)' : 'none',
+        borderLeft: isActive ? '3px solid #00f2ff' : '3px solid transparent',
+        boxShadow: isActive ? '0 0 15px rgba(0,242,255,0.12)' : 'none',
         transform: hov && !false ? 'translateX(3px)' : 'translateX(0)'
       })}
     >
@@ -249,13 +250,9 @@ const AdminLayout = () => {
   const [logHov, setLogHov] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate('/admin/login');
-    } catch (error) {
-      console.error('Error signing out', error);
-    }
+  const handleLogout = () => {
+    logout();
+    navigate('/admin/login');
   };
 
   useEffect(() => {
@@ -266,9 +263,8 @@ const AdminLayout = () => {
   const navItems = [
     { path: '/admin/dashboard', icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
     { path: '/admin/leads',     icon: <MessageSquare size={18} />,   label: 'Leads'     },
+    { path: '/admin/products',  icon: <List size={18} />,            label: 'Products'  },
     { path: '/admin/gallery',   icon: <ImageIcon size={18} />,       label: 'Gallery'   },
-    { path: '/admin/transform', icon: <Sparkles size={18} />,        label: 'Spotlight' },
-    { path: '/admin/services',  icon: <List size={18} />,            label: 'Services'  },
     { path: '/admin/testimonials', icon: <MessageSquare size={18} />, label: 'Testimonials' },
     { path: '/admin/settings',  icon: <Settings size={18} />,        label: 'Settings'  },
   ];
@@ -279,7 +275,7 @@ const AdminLayout = () => {
     <div style={{
       display: 'flex',
       minHeight: '100vh',
-      background: 'radial-gradient(ellipse at 20% 40%,#0f1d2e 0%,#0a0a0f 55%,#12050a 100%)',
+      background: 'radial-gradient(ellipse at 20% 40%,#0f172a 0%,#0a0f14 55%,#0f172a 100%)',
       color: '#e2e8f0',
       fontFamily: "'DM Sans', system-ui, sans-serif",
       position: 'relative',
@@ -312,7 +308,7 @@ const AdminLayout = () => {
           background: 'rgba(12,12,18,0.92)',
           backdropFilter: 'blur(24px)',
           WebkitBackdropFilter: 'blur(24px)',
-          borderRight: '1px solid rgba(197,160,89,0.12)',
+          borderRight: '1px solid rgba(0,242,255,0.12)',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
@@ -324,7 +320,7 @@ const AdminLayout = () => {
         {/* Brand */}
         <div style={{
           padding: '1.6rem 1.5rem 1.2rem',
-          borderBottom: '1px solid rgba(197,160,89,0.1)',
+          borderBottom: '1px solid rgba(0,242,255,0.1)',
           display: 'flex',
           alignItems: 'center',
           gap: '0.6rem'
@@ -333,18 +329,21 @@ const AdminLayout = () => {
             width: 32,
             height: 32,
             borderRadius: '8px',
-            background: 'linear-gradient(135deg,#c5a059,#7c5f1e)',
+            background: 'linear-gradient(135deg,#00f2ff,#3b82f6)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 16px rgba(197,160,89,0.45)',
-            flexShrink: 0
+            boxShadow: '0 0 16px rgba(0,242,255,0.45)',
+            flexShrink: 0,
+            color: '#fff',
+            fontWeight: '900',
+            fontSize: '1.1rem'
           }}>
-            <Zap size={16} color="#fff" />
+            <img src={logoImg} alt="JDS Logo" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
           </div>
           <div>
-            <div style={{ color: '#c5a059', fontWeight: 800, fontSize: '1rem', letterSpacing: '0.02em' }}>
-              VGW Admin
+            <div style={{ color: '#00f2ff', fontWeight: 800, fontSize: '1rem', letterSpacing: '0.02em' }}>
+              JDS Admin
             </div>
             <div style={{ color: '#475569', fontSize: '0.65rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Control Panel
@@ -398,9 +397,9 @@ const AdminLayout = () => {
         <div style={{
           margin: '1rem',
           padding: '0.75rem 1rem',
-          background: 'rgba(197,160,89,0.06)',
+          background: 'rgba(0,242,255,0.06)',
           borderRadius: '10px',
-          border: '1px solid rgba(197,160,89,0.1)',
+          border: '1px solid rgba(0,242,255,0.1)',
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem'
@@ -459,7 +458,7 @@ const AdminLayout = () => {
         {/* Topbar */}
         <header style={{
           padding: '1rem 2rem',
-          borderBottom: '1px solid rgba(197,160,89,0.1)',
+          borderBottom: '1px solid rgba(0,242,255,0.1)',
           background: 'rgba(10,10,15,0.85)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
@@ -476,11 +475,11 @@ const AdminLayout = () => {
               onClick={() => setIsMobileMenuOpen(true)}
               className="admin-mobile-show"
               style={{
-                background: 'rgba(197,160,89,0.1)',
-                border: '1px solid rgba(197,160,89,0.2)',
+                background: 'rgba(0,242,255,0.1)',
+                border: '1px solid rgba(0,242,255,0.2)',
                 borderRadius: '8px',
                 padding: '0.5rem',
-                color: '#c5a059',
+                color: '#00f2ff',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -493,14 +492,14 @@ const AdminLayout = () => {
             <div style={{
               width: 3,
               height: 24,
-              background: 'linear-gradient(180deg,#c5a059,transparent)',
+              background: 'linear-gradient(180deg,#00f2ff,transparent)',
               borderRadius: 2
             }} className="admin-mobile-hide" />
             <h1 style={{
               margin: 0,
               fontSize: 'clamp(1rem, 4vw, 1.2rem)',
               fontWeight: 700,
-              background: 'linear-gradient(90deg,#fff 60%,#c5a059)',
+              background: 'linear-gradient(90deg,#fff 60%,#00f2ff)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent'
             }}>
@@ -520,30 +519,31 @@ const AdminLayout = () => {
                 gap: '0.4rem',
                 padding: '0.5rem 1rem',
                 borderRadius: '8px',
-                border: '1px solid rgba(197,160,89,0.4)',
-                color: '#c5a059',
+                border: '1px solid rgba(0,242,255,0.4)',
+                color: '#00f2ff',
                 textDecoration: 'none',
                 fontSize: '0.85rem',
                 fontWeight: 600,
                 transition: 'all 0.3s ease',
-                background: 'rgba(197,160,89,0.06)'
+                background: 'rgba(0,242,255,0.06)'
               }}
             >
               <ExternalLink size={14} />
               Live Site
             </a>
-            <img
-              src={ownerImg}
-              alt="Admin"
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: '50%',
-                objectFit: 'cover',
-                border: '2px solid rgba(197,160,89,0.6)',
-                boxShadow: '0 0 10px rgba(197,160,89,0.3)'
-              }}
-            />
+            <div style={{
+              width: 34,
+              height: 34,
+              borderRadius: '50%',
+              background: 'rgba(0,242,255,0.1)',
+              border: '2px solid rgba(0,242,255,0.6)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 0 10px rgba(0,242,255,0.3)'
+            }}>
+              <User size={18} color="#00f2ff" />
+            </div>
           </div>
         </header>
 

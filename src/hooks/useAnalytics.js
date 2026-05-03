@@ -1,21 +1,18 @@
-import { logEvent } from "firebase/analytics";
-import { analytics } from "../firebase";
-
+/**
+ * JDS Iron and Steels — Analytics Hook (Legacy)
+ * Formerly used Firebase Analytics, now a no-op hook to maintain compatibility.
+ */
 const useAnalytics = () => {
   const trackEvent = (eventName, eventParams = {}) => {
-    try {
-      logEvent(analytics, eventName, eventParams);
-    } catch (error) {
-      console.error("Analytics error:", error);
-    }
+    // console.log("Track Event:", eventName, eventParams);
   };
 
   const trackPageView = (pageName) => {
-    trackEvent("page_view", { page_title: pageName });
+    // console.log("Page View:", pageName);
   };
 
   const trackAction = (actionName, category) => {
-    trackEvent("action_click", { action: actionName, category });
+    // console.log("Action:", actionName, category);
   };
 
   return { trackEvent, trackPageView, trackAction };

@@ -7,19 +7,19 @@ import './Intro.css';
 const MobileIntro = ({ onComplete, fadingOut }) => {
   useEffect(() => {
     gsap.fromTo('.intro-subtitle', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, delay: 0.3 });
-    gsap.fromTo('.intro-tagline',  { opacity: 0 },         { opacity: 1, duration: 0.8, delay: 0.8 });
+    gsap.fromTo('.intro-tagline', { opacity: 0 }, { opacity: 1, duration: 0.8, delay: 0.8 });
   }, []);
 
   return (
     <div className={`intro-container intro-mobile ${fadingOut ? 'fade-out' : ''}`}>
       <div className="intro-mobile-logo">
-        <span className="intro-logo-v">V</span>
-        <span className="intro-logo-g">G</span>
-        <span className="intro-logo-w">W</span>
+        <span className="intro-logo-j">J</span>
+        <span className="intro-logo-d">D</span>
+        <span className="intro-logo-s">S</span>
       </div>
       <div className="intro-overlay" style={{ top: '62%' }}>
-        <h1 className="intro-subtitle">Velmurugan Grill Works</h1>
-        <p className="intro-tagline">Built with Strength. Designed with Precision.</p>
+        <h1 className="intro-subtitle">JDS IRON AND STEELS</h1>
+        <p className="intro-tagline">Forging strength,shaping the future in steel</p>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://velmurugangrillworks.netlify.app/sitemap.xml
+Sitemap: https://jdsironandsteels.com/sitemap.xml

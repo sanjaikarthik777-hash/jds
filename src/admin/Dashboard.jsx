@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Image as ImageIcon, List, MessageSquare, Settings, TrendingUp, Activity, Globe } from 'lucide-react';
+import { Image as ImageIcon, List, MessageSquare, Settings, TrendingUp, Activity, Globe, User } from 'lucide-react';
 import * as THREE from 'three';
-import ownerImg from '../OWNER.jpeg';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-import { db } from '../firebase';
-import { collection, query, where, getDocs, doc, onSnapshot } from 'firebase/firestore';
+import { getGallery, getProducts, getLeads, getAnalytics } from '../store';
 
 /* ─── 3D rotating icon canvas per card ─── */
 const MiniScene = ({ color }) => {
@@ -142,7 +140,7 @@ const ActionCard = ({ title, desc, path, color, Icon }) => {
 /* ─── Main Dashboard ─── */
 const Dashboard = () => {
   const [greeting, setGreeting] = useState('');
-  const [realStats, setRealStats] = useState({ gallery: 0, services: 0, leads: 0, visits: 0 });
+  const [realStats, setRealStats] = useState({ gallery: 0, products: 0, leads: 0, visits: 0 });
   const [chartData, setChartData] = useState([]);
   const [recentLeads, setRecentLeads] = useState([]);
 
@@ -152,64 +150,41 @@ const Dashboard = () => {
     else if (h < 17) setGreeting('Good Afternoon');
     else setGreeting('Good Evening');
 
-    const unsubGallery = onSnapshot(collection(db, 'gallery'), snap => {
-      setRealStats(prev => ({ ...prev, gallery: snap.size }));
-    });
-    const unsubServices = onSnapshot(collection(db, 'services'), snap => {
-      setRealStats(prev => ({ ...prev, services: snap.size }));
-    });
-    const unsubLeads = onSnapshot(collection(db, 'leads'), snap => {
-      setRealStats(prev => ({ ...prev, leads: snap.size }));
-      const leads = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-        .sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0))
-        .slice(0, 5);
-      setRecentLeads(leads);
-    });
-    const unsubVisits = onSnapshot(doc(db, 'analytics', 'daily_visits'), docSnap => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setRealStats(prev => ({ ...prev, visits: data.total || 0 }));
-        const days = [];
-        for (let i = 6; i >= 0; i--) {
-          const d = new Date();
-          d.setDate(d.getDate() - i);
-          const dateStr = d.toISOString().split('T')[0];
-          days.push({
-            name: d.toLocaleDateString('en-US', { weekday: 'short' }),
-            visits: data[dateStr] || 0
-          });
-        }
-        setChartData(days);
-      }
-    });
+    // Load from localStorage store
+    const gallery = getGallery();
+    const products = getProducts();
+    const leads = getLeads();
+    const { total, chartData: cd } = getAnalytics();
 
-    return () => {
-      unsubGallery();
-      unsubServices();
-      unsubLeads();
-      unsubVisits();
-    };
+    setRealStats({
+      gallery: gallery.length,
+      products: products.length,
+      leads: leads.length,
+      visits: total,
+    });
+    setChartData(cd);
+    setRecentLeads(leads.slice(0, 5));
   }, []);
 
   const stats = [
-    { icon: ImageIcon, label: 'Gallery Items', value: realStats.gallery, color: '197,160,89', sub: 'Total projects' },
-    { icon: List,      label: 'Services',      value: realStats.services,  color: '99,179,237', sub: 'Active offerings'   },
-    { icon: MessageSquare, label: 'Total Leads', value: realStats.leads, color: '134,239,172', sub: 'Quote requests'     },
-    { icon: TrendingUp, label: 'Site Visits',  value: realStats.visits,   color: '249,168,212', sub: 'Total traffic' },
+    { icon: ImageIcon, label: 'Gallery Items', value: realStats.gallery,  color: '0,242,255',   sub: 'Total projects'   },
+    { icon: List,      label: 'Products',      value: realStats.products, color: '59,130,246',  sub: 'Active offerings'  },
+    { icon: MessageSquare, label: 'Total Leads', value: realStats.leads,  color: '34,211,238',  sub: 'Quote requests'    },
+    { icon: TrendingUp, label: 'Site Visits',  value: realStats.visits,   color: '14,165,233',  sub: 'Total traffic'    },
   ];
 
   const actions = [
-    { title: 'Gallery',      desc: 'Manage portfolio images',    path: '/admin/gallery',       color: '197,160,89',  Icon: ImageIcon      },
-    { title: 'Services',     desc: 'Update service offerings',   path: '/admin/services',      color: '99,179,237',  Icon: List           },
-    { title: 'Leads',        desc: 'Manage quote requests',      path: '/admin/leads',         color: '134,239,172', Icon: MessageSquare  },
-    { title: 'Settings',     desc: 'Pricing & SEO settings',     path: '/admin/settings',      color: '249,168,212', Icon: Settings       },
+    { title: 'Gallery',      desc: 'Manage portfolio images',    path: '/admin/gallery',       color: '0,242,255',   Icon: ImageIcon      },
+    { title: 'Products',     desc: 'Update product listings',    path: '/admin/products',      color: '59,130,246',  Icon: List           },
+    { title: 'Leads',        desc: 'Manage quote requests',      path: '/admin/leads',         color: '34,211,238',  Icon: MessageSquare  },
+    { title: 'Settings',     desc: 'Pricing & SEO settings',     path: '/admin/settings',      color: '14,165,233',  Icon: Settings       },
   ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div style={{
-        background: 'linear-gradient(135deg, rgba(197,160,89,0.12) 0%, rgba(30,58,95,0.18) 50%, rgba(12,12,20,0.6) 100%)',
-        border: '1px solid rgba(197,160,89,0.2)',
+        background: 'linear-gradient(135deg, rgba(0,242,255,0.12) 0%, rgba(59,130,246,0.18) 50%, rgba(10,15,20,0.6) 100%)',
+        border: '1px solid rgba(0,242,255,0.2)',
         borderRadius: 20,
         padding: '2rem',
         display: 'flex',
@@ -218,14 +193,23 @@ const Dashboard = () => {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        <div style={{ position: 'relative' }}>
-          <img src={ownerImg} alt="Owner" style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '3px solid #c5a059' }} />
+        <div style={{ 
+          width: 80, 
+          height: 80, 
+          borderRadius: '50%', 
+          background: '#1a1a24', 
+          border: '3px solid #00f2ff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <User size={40} color="#00f2ff" />
           <span style={{ position: 'absolute', bottom: 3, right: 3, width: 14, height: 14, background: '#22c55e', borderRadius: '50%', border: '3px solid #0a0a0f' }} />
         </div>
         <div>
           <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>{greeting},</div>
-          <h2 style={{ margin: '0 0 0.3rem', fontSize: '1.8rem', fontWeight: 800, color: '#fff' }}>Sathish Kumar 👋</h2>
-          <p style={{ margin: 0, color: '#64748b', fontSize: '0.88rem' }}>Owner · Velmurugan Grill Works</p>
+          <h2 style={{ margin: '0 0 0.3rem', fontSize: '1.8rem', fontWeight: 800, color: '#fff' }}>Sailesh Purohit 👋</h2>
+          <p style={{ margin: 0, color: '#64748b', fontSize: '0.88rem' }}>Owner · JDS Iron and Steels</p>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Globe size={14} color="#22c55e" />
@@ -249,15 +233,15 @@ const Dashboard = () => {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#c5a059" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#c5a059" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#00f2ff" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#00f2ff" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                 <XAxis dataKey="name" stroke="#475569" fontSize={11} />
                 <YAxis stroke="#475569" fontSize={11} />
                 <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)' }} />
-                <Area type="monotone" dataKey="visits" stroke="#c5a059" fill="url(#colorVisits)" strokeWidth={3} />
+                <Area type="monotone" dataKey="visits" stroke="#00f2ff" fill="url(#colorVisits)" strokeWidth={3} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -265,14 +249,16 @@ const Dashboard = () => {
 
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '1.5rem' }}>
           <div style={{ marginBottom: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Activity size={16} color="#c5a059" />
+            <Activity size={16} color="#00f2ff" />
             <span style={{ color: '#94a3b8', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase' }}>Recent Leads</span>
           </div>
           {recentLeads.length > 0 ? recentLeads.map((l, i) => (
             <div key={i} style={{ padding: '0.8rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <div style={{ color: '#fff', fontSize: '0.85rem', fontWeight: 600 }}>{l.name}</div>
               <div style={{ color: '#64748b', fontSize: '0.75rem' }}>{l.gateType} • {l.material}</div>
-              <div style={{ color: '#c5a059', fontSize: '0.7rem', marginTop: 4 }}>{l.timestamp?.toDate().toLocaleDateString()}</div>
+              <div style={{ color: '#00f2ff', fontSize: '0.7rem', marginTop: 4 }}>
+                {l.timestamp ? new Date(l.timestamp).toLocaleDateString() : ''}
+              </div>
             </div>
           )) : (
             <div style={{ color: '#475569', fontSize: '0.8rem', padding: '1rem 0' }}>No recent leads</div>

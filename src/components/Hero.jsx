@@ -3,8 +3,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
-import { db } from '../firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { getSettings } from '../store';
 import useIsMobile from '../hooks/useIsMobile';
 import './Hero.css';
 
@@ -49,18 +48,16 @@ const GrillStructure = ({ isMobile }) => {
   );
 };
 
-
-
-import heroBg from '../assets/hero-bg.png';
+import heroBg from '../assets/hero-bg-cyber.png';
 
 const Hero = () => {
   const isMobile = useIsMobile();
   const [content, setContent] = useState({
-    heroTitle: 'Premium Metal',
-    heroHighlight: 'Fabrication & Design',
-    heroSubtitle: 'Transforming industrial visions into metallic reality with 10+ years of expert craftsmanship in gates, grills, and structural works.'
+    heroTitle: 'CRAFTING EXCELLENCE IN',
+    heroHighlight: 'IRON & STEEL',
+    heroSubtitle: 'JDS Iron and Steels — Transforming spaces with premium fabrication, robust structures, and precision metalworks for over a decade.'
   });
-  const [contact, setContact] = useState({ phone: '9043426461' });
+  const [contact, setContact] = useState({ phone: '+91 9894339560' });
   const [phraseIndex, setPhraseIndex] = useState(0);
 
   useEffect(() => {
@@ -71,13 +68,9 @@ const Hero = () => {
   }, []);
 
   useEffect(() => {
-    const unsubHome = onSnapshot(doc(db, 'settings', 'homepage'), (doc) => {
-      if (doc.exists()) setContent(prev => ({ ...prev, ...doc.data() }));
-    });
-    const unsubContact = onSnapshot(doc(db, 'settings', 'contact'), (doc) => {
-      if (doc.exists()) setContact(prev => ({ ...prev, ...doc.data() }));
-    });
-    return () => { unsubHome(); unsubContact(); };
+    const settings = getSettings();
+    setContent(settings.homepage);
+    setContact(settings.contact);
   }, []);
 
   return (
@@ -119,14 +112,14 @@ const Hero = () => {
             {content.heroSubtitle}
           </p>
           <div className="hero-cta">
-            <motion.button 
+            <motion.a 
+              href="#contact"
               className="btn btn-primary btn-lg"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => document.dispatchEvent(new CustomEvent('openQuoteGenerator'))}
             >
               Get Instant Quote
-            </motion.button>
+            </motion.a>
             <motion.a 
               href="#gallery" 
               className="btn btn-outline btn-lg"

@@ -39,25 +39,33 @@
 }
 
 .reveal-text-box h2 {
-  font-size: clamp(2.5rem, 8vw, 4.5rem);
-  color: #fff;
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  color: transparent;
+  background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
   font-weight: 900;
-  letter-spacing: -1px;
+  letter-spacing: -2px;
   margin-bottom: 1.5rem;
   text-transform: uppercase;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  filter: drop-shadow(0 0 20px rgba(255,255,255,0.1));
 }
 
 .reveal-divider {
   width: 80px;
   height: 4px;
-  background: #C5A059;
+  background: var(--accent-primary);
   margin: 0 auto 2rem;
+  box-shadow: 0 0 15px var(--accent-glow);
 }
 
 .reveal-text-box p {
-  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
-  color: #94a3b8;
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  color: #a1a1aa;
   font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .gate-panels-layer {
@@ -74,17 +82,18 @@
 .gate-panel-half {
   width: 50.5%;
   height: 100%;
-  background: #111;
+  background: #09090b;
   position: relative;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.9), 0 0 50px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
 }
 
 .left-half {
-  border-right: 2px solid #C5A059;
+  border-right: 3px solid #27272a;
 }
 
 .right-half {
-  border-left: 2px solid #C5A059;
+  border-left: 3px solid #27272a;
 }
 
 .gate-panel-inner {
@@ -98,36 +107,104 @@
 .left-half .gate-panel-inner { justify-content: flex-end; }
 .right-half .gate-panel-inner { justify-content: flex-start; }
 
-.gate-handle-gold {
-  width: 40px;
-  height: 160px;
-  background: linear-gradient(to bottom, #A67C37, #C5A059, #A67C37);
+/* ── Premium Industrial Details ── */
+
+.gate-mesh {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at center, rgba(255,255,255,0.05) 1px, transparent 1.5px),
+    radial-gradient(circle at center, rgba(0,0,0,0.8) 2px, transparent 2.5px);
+  background-size: 12px 12px;
+  background-position: 0 0, 6px 6px;
+  z-index: 1;
+  opacity: 0.7;
+}
+
+.gate-structural-frame {
+  position: absolute;
+  inset: 2rem;
+  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.2);
+  z-index: 2;
+  box-shadow: 
+    inset 0 0 20px rgba(0,0,0,0.8),
+    0 0 10px rgba(0,0,0,0.5);
+  pointer-events: none;
+}
+
+.bolt {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #3f3f46;
+  border-radius: 50%;
+  box-shadow: 
+    inset 0 2px 2px rgba(255,255,255,0.2),
+    inset 0 -2px 2px rgba(0,0,0,0.8),
+    0 2px 4px rgba(0,0,0,0.5);
+}
+.bolt::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: #27272a;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.8);
+}
+
+.top-left { top: 1rem; left: 1rem; }
+.top-right { top: 1rem; right: 1rem; }
+.bottom-left { bottom: 1rem; left: 1rem; }
+.bottom-right { bottom: 1rem; right: 1rem; }
+
+/* ── Cyan Plasma Handles ── */
+
+.gate-handle-cyan {
+  width: 60px;
+  height: 220px;
+  background: #18181b;
   position: absolute;
   z-index: 20;
+  box-shadow: 
+    0 0 30px rgba(0, 0, 0, 0.8),
+    inset 0 0 10px rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #3f3f46;
 }
 
-.handle-left { right: 10px; border-radius: 8px 0 0 8px; }
-.handle-right { left: 10px; border-radius: 0 8px 8px 0; }
+.handle-left { right: 20px; border-radius: 12px 0 0 12px; border-right: none; }
+.handle-right { left: 20px; border-radius: 0 12px 12px 0; border-left: none; }
 
-.gate-texture {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 30px 30px;
+.handle-core {
+  width: 12px;
+  height: 70%;
+  background: var(--accent-primary);
+  border-radius: 20px;
+  box-shadow: 
+    0 0 20px var(--accent-primary),
+    0 0 40px var(--accent-primary),
+    inset 0 0 10px #fff;
+  animation: plasma-pulse 2s ease-in-out infinite alternate;
 }
+
+@keyframes plasma-pulse {
+  0% { opacity: 0.7; filter: brightness(1); }
+  100% { opacity: 1; filter: brightness(1.5); }
+}
+
+/* ── Metallic Shine Sweep ── */
 
 .gate-shine {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.05) 50%, transparent 60%);
+  inset: 0;
+  background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.03) 25%, transparent 30%);
   background-size: 200% 100%;
-  animation: gate-shimmer 6s infinite;
+  z-index: 5;
+  animation: gate-shimmer 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
 }
 
 @keyframes gate-shimmer {
@@ -137,6 +214,9 @@
 
 @media (max-width: 768px) {
   .gate-section-wrapper { height: 80vh; }
-  .reveal-text-box h2 { font-size: 2.2rem; }
-  .gate-handle-gold { width: 30px; height: 120px; }
+  .reveal-text-box h2 { font-size: 2.8rem; }
+  .gate-handle-cyan { width: 40px; height: 160px; }
+  .handle-left { right: 10px; }
+  .handle-right { left: 10px; }
+  .gate-structural-frame { inset: 1rem; }
 }

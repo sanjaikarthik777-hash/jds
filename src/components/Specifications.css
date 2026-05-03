@@ -1,0 +1,124 @@
+.spec-section {
+  padding: 100px 0;
+  background: radial-gradient(circle at 80% 20%, rgba(0, 242, 255, 0.05) 0%, transparent 50%);
+  position: relative;
+  overflow: hidden;
+}
+
+.spec-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-subtitle {
+  color: #94a3b8;
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 40px;
+}
+
+.spec-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.spec-card:hover {
+  transform: translateY(-10px);
+  border-color: rgba(0, 242, 255, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.spec-image-container {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+}
+
+.spec-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.spec-card:hover .spec-image {
+  transform: scale(1.1);
+}
+
+.spec-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30px;
+  background: linear-gradient(to top, rgba(10, 10, 15, 0.95), transparent);
+}
+
+.spec-title {
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.spec-content {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.spec-subtitle {
+  color: var(--accent-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 25px;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+.spec-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.spec-tag {
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  color: #94a3b8;
+  font-size: 0.65rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.spec-tag:hover {
+  background: rgba(0, 242, 255, 0.15);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .spec-section {
+    padding: 60px 0;
+  }
+  .spec-grid {
+    grid-template-columns: 1fr;
+  }
+}

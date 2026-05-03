@@ -26,10 +26,10 @@ const GateTransition = () => {
             style={{ opacity: contentOpacity, scale: contentScale }}
             className="reveal-text-box"
           >
-            <span className="reveal-badge">Velmurugan Industries</span>
-            <h2>FORGING THE FUTURE</h2>
+            <span className="reveal-badge">JDS Iron and Steels</span>
+            <h2>EXCELLENCE IN STEEL</h2>
             <div className="reveal-divider"></div>
-            <p>Premium Metal Fabrication & Industrial Design</p>
+            <p>Premium Tool & Alloy Steels · Forgings · CNC Cutting</p>
           </motion.div>
         </div>
 
@@ -37,19 +37,33 @@ const GateTransition = () => {
         <div className="gate-panels-layer">
           <motion.div className="gate-panel-half left-half" style={{ x: leftX }}>
             <div className="gate-panel-inner">
-              <div className="gate-texture"></div>
-              <div className="gate-decoration"></div>
+              <div className="gate-mesh"></div>
+              <div className="gate-structural-frame">
+                <div className="bolt top-left"></div>
+                <div className="bolt top-right"></div>
+                <div className="bolt bottom-left"></div>
+                <div className="bolt bottom-right"></div>
+              </div>
               <div className="gate-shine"></div>
-              <div className="gate-handle-gold handle-left"></div>
+              <div className="gate-handle-cyan handle-left">
+                <div className="handle-core"></div>
+              </div>
             </div>
           </motion.div>
           
           <motion.div className="gate-panel-half right-half" style={{ x: rightX }}>
             <div className="gate-panel-inner">
-              <div className="gate-texture"></div>
-              <div className="gate-decoration"></div>
+              <div className="gate-mesh"></div>
+              <div className="gate-structural-frame">
+                <div className="bolt top-left"></div>
+                <div className="bolt top-right"></div>
+                <div className="bolt bottom-left"></div>
+                <div className="bolt bottom-right"></div>
+              </div>
               <div className="gate-shine"></div>
-              <div className="gate-handle-gold handle-right"></div>
+              <div className="gate-handle-cyan handle-right">
+                <div className="handle-core"></div>
+              </div>
             </div>
           </motion.div>
         </div>

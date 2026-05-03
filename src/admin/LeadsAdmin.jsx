@@ -1,36 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
-import { collection, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { Trash2, CheckCircle, Clock, Download, Search, Phone, MessageSquare } from 'lucide-react';
+import { getLeads, updateLead, deleteLead } from '../store';
+import { Trash2, CheckCircle, Download, Search, Phone, MessageSquare } from 'lucide-react';
 
 const LeadsAdmin = () => {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const loadLeads = () => {
+    setLeads(getLeads());
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const q = query(collection(db, 'leads'), orderBy('timestamp', 'desc'));
-    const unsub = onSnapshot(q, (snap) => {
-      setLeads(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setLoading(false);
-    });
-    return () => unsub();
+    loadLeads();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     if (window.confirm('Delete this lead?')) {
-      await deleteDoc(doc(db, 'leads', id));
+      deleteLead(id);
+      loadLeads();
     }
   };
 
-  const toggleContacted = async (id, currentStatus) => {
-    await updateDoc(doc(db, 'leads', id), {
-      status: currentStatus === 'contacted' ? 'new' : 'contacted'
-    });
+  const toggleContacted = (id, currentStatus) => {
+    updateLead(id, { status: currentStatus === 'contacted' ? 'new' : 'contacted' });
+    loadLeads();
   };
 
   const exportCSV = () => {
-    const headers = ['Name', 'Phone', 'Gate Type', 'Material', 'Size', 'Complexity', 'Price Range', 'Date'];
+    const headers = ['Name', 'Phone', 'Gate Type', 'Material', 'Size', 'Complexity', 'Price Range', 'Date', 'Status'];
     const rows = leads.map(l => [
       l.name,
       l.phone,
@@ -39,24 +38,25 @@ const LeadsAdmin = () => {
       `${l.width}x${l.height}`,
       l.complexity,
       l.priceRange,
-      l.timestamp?.toDate().toLocaleDateString()
+      l.timestamp ? new Date(l.timestamp).toLocaleDateString() : '',
+      l.status
     ]);
 
-    let csvContent = "data:text/csv;charset=utf-8," 
+    let csvContent = "data:text/csv;charset=utf-8,"
       + headers.join(",") + "\n"
       + rows.map(e => e.join(",")).join("\n");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `VGW_Leads_${new Date().toLocaleDateString()}.csv`);
+    link.setAttribute("download", `JDS_Leads_${new Date().toLocaleDateString()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const filteredLeads = leads.filter(l => 
-    l.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredLeads = leads.filter(l =>
+    l.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     l.phone?.includes(searchTerm)
   );
 
@@ -93,20 +93,20 @@ const LeadsAdmin = () => {
       <div className="responsive-table-container" style={styles.tableContainer}>
         <table style={styles.table}>
           <thead>
-            <tr>
-              <th>Date</th>
-              <th>Customer</th>
-              <th>Requirement</th>
-              <th>Estimate</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
+              <tr>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Source</th>
+                <th>Message / Requirement</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
           </thead>
           <tbody>
             {filteredLeads.map(lead => (
               <tr key={lead.id} style={lead.status === 'contacted' ? styles.contactedRow : {}}>
                 <td style={{ color: '#64748b', fontSize: '0.8rem' }}>
-                  {lead.timestamp?.toDate().toLocaleDateString()}
+                  {lead.timestamp ? new Date(lead.timestamp).toLocaleDateString() : '—'}
                 </td>
                 <td>
                   <div style={{ color: '#fff', fontWeight: 600 }}>{lead.name}</div>
@@ -115,15 +115,33 @@ const LeadsAdmin = () => {
                   </div>
                 </td>
                 <td>
-                  <div style={{ color: '#cbd5e1' }}>{lead.gateType} • {lead.material}</div>
-                  <div style={{ color: '#64748b', fontSize: '0.75rem' }}>{lead.width}x{lead.height}ft • {lead.complexity}</div>
+                  <span style={{
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: '20px',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    background: lead.source === 'Phone Call' ? 'rgba(59,130,246,0.15)' :
+                                lead.source?.includes('WhatsApp') ? 'rgba(37,211,102,0.15)' :
+                                lead.source === 'Email' ? 'rgba(251,146,60,0.15)' :
+                                lead.source === 'Instagram DM' ? 'rgba(232,66,144,0.15)' :
+                                'rgba(0,242,255,0.1)',
+                    color: lead.source === 'Phone Call' ? '#60a5fa' :
+                           lead.source?.includes('WhatsApp') ? '#25d366' :
+                           lead.source === 'Email' ? '#fb923c' :
+                           lead.source === 'Instagram DM' ? '#e84290' :
+                           'var(--accent-primary)'
+                  }}>
+                    {lead.source || 'Contact Form'}
+                  </span>
                 </td>
-                <td style={{ color: '#c5a059', fontWeight: 700 }}>{lead.priceRange}</td>
+                <td style={{ color: '#cbd5e1', maxWidth: 220, fontSize: '0.88rem' }}>
+                  {lead.message || lead.gateType || '—'}
+                </td>
                 <td>
                   <span style={{
                     ...styles.badge,
-                    background: lead.status === 'contacted' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(197, 160, 89, 0.1)',
-                    color: lead.status === 'contacted' ? '#22c55e' : '#c5a059'
+                    background: lead.status === 'contacted' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(0, 242, 255, 0.1)',
+                    color: lead.status === 'contacted' ? '#22c55e' : 'var(--accent-primary)'
                   }}>
                     {lead.status === 'contacted' ? 'Contacted' : 'New'}
                   </span>

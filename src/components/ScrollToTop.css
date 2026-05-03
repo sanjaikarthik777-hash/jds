@@ -4,23 +4,23 @@
   background: rgba(20, 20, 22, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(197, 160, 89, 0.4);
+  border: 1px solid rgba(0, 242, 255, 0.4);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent-orange);
+  color: var(--accent-primary);
   cursor: pointer;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 
-              0 0 15px rgba(197, 160, 89, 0.2);
+              0 0 15px rgba(0, 242, 255, 0.2);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   z-index: 10000;
 }
 
 .scroll-to-top-container:hover {
-  border-color: var(--accent-orange);
+  border-color: var(--accent-primary);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 
-              0 0 25px rgba(197, 160, 89, 0.4);
+              0 0 25px rgba(0, 242, 255, 0.4);
 }
 
 .scroll-to-top-icon {
@@ -28,7 +28,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  filter: drop-shadow(0 0 5px rgba(197, 160, 89, 0.3));
+  filter: drop-shadow(0 0 5px rgba(0, 242, 255, 0.3));
 }
 
 /* Mobile adjustments */

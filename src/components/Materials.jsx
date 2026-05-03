@@ -1,65 +1,39 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { Shield, Truck, Zap } from 'lucide-react';
 import './Materials.css';
-
-const materialsData = [
-  {
-    id: 'MS',
-    title: 'Mild Steel (MS)',
-    features: [
-      'High tensile strength',
-      'Cost effective',
-      'Easy to weld',
-      'Powder coat ready'
-    ],
-    usedIn: 'Gates, Grills, Fences, Frames'
-  },
-  {
-    id: 'SS',
-    title: 'Stainless Steel (SS)',
-    features: [
-      'Corrosion resistant',
-      'Premium finish',
-      'Long lifespan',
-      'Modern aesthetic'
-    ],
-    usedIn: 'Railings, Kitchen, Balcony, Commercial'
-  },
-  {
-    id: 'AL',
-    title: 'Aluminum',
-    features: [
-      'Lightweight',
-      'Weather proof',
-      'Low maintenance',
-      'Anodized finish'
-    ],
-    usedIn: 'Windows, Partitions, Roofing Frames'
-  }
-];
 
 const Materials = () => {
   return (
-    <section id="materials" className="section materials-section">
+    <section id="materials" className="materials-section">
       <div className="container">
-        <h2 className="section-title">Materials</h2>
-        <div className="materials-grid">
-          {materialsData.map((mat) => (
-            <div key={mat.id} className="material-card glass-panel">
-              <div className="material-badge">{mat.id}</div>
-              <h3 className="material-title">{mat.title}</h3>
-              <ul className="material-features">
-                {mat.features.map((feature, idx) => (
-                  <li key={idx}>
-                    <span className="bullet"></span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <div className="material-footer">
-                <span className="used-in-label">Used in:</span> {mat.usedIn}
+        <div className="materials-content-box glass-panel-premium">
+          <div className="materials-header">
+            <span className="materials-badge">IRON & STEEL SUPPLIER</span>
+            <h2 className="materials-title">Building Strength With <span className="text-gradient">Quality Steel</span></h2>
+          </div>
+          
+          <div className="materials-body">
+            <p className="materials-desc">
+              We supply premium iron and steel materials for construction, industrial, and fabrication needs. 
+              Trusted for quality, durability, and timely delivery in Coimbatore.
+            </p>
+            
+            <div className="materials-features-grid">
+              <div className="feat-item">
+                <div className="feat-icon"><Shield size={20} /></div>
+                <span>Premium Quality</span>
+              </div>
+              <div className="feat-item">
+                <div className="feat-icon"><Zap size={20} /></div>
+                <span>High Durability</span>
+              </div>
+              <div className="feat-item">
+                <div className="feat-icon"><Truck size={20} /></div>
+                <span>Timely Delivery</span>
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>

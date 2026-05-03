@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react';
-import { db } from '../firebase';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { getTestimonials } from '../store';
 import './Testimonials.css';
 
 const StarRating = ({ rating = 5 }) => (
   <div className="star-rating">
     {[...Array(5)].map((_, i) => (
-      <Star key={i} size={16} fill={i < rating ? "#c5a059" : "none"} color="#c5a059" />
+      <Star key={i} size={16} fill={i < rating ? "#00f2ff" : "none"} color="#00f2ff" />
     ))}
   </div>
 );
@@ -18,20 +17,30 @@ const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
+  const defaultTestimonials = [
+    { name: 'Arun Kumar', role: 'Production Manager, Precision Forge', text: 'JDS Iron and Steels is our go-to partner for tool steels. Their D2 and H13 stock is always of premium quality and cut to exact tolerances.', rating: 5 },
+    { name: 'Suresh Raina', role: 'Mechanical Engineer', text: 'Exceptional service and timely delivery. The alloy steel rounds we received were perfectly finished and met all our industrial requirements.', rating: 5 },
+    { name: 'Deepika S.', role: 'Project Coordinator', text: 'The CNC cutting facility at JDS is top-notch. They handled our complex size requirements for carbon steel flats with impressive accuracy.', rating: 5 },
+    { name: 'Vijay Varma', role: 'Industrial Contractor', text: 'Reliable supplier for bulk steel orders. Their inventory management ensures we never face delays in our manufacturing cycle.', rating: 5 }
+  ];
+
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, 'testimonials'), (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const data = getTestimonials();
+    if (data && data.length > 0) {
       setTestimonials(data);
-    });
-    return () => unsub();
+    } else {
+      setTestimonials(defaultTestimonials);
+    }
   }, []);
 
   const nextSlide = () => {
+    if (testimonials.length === 0) return;
     setDirection(1);
     setCurrentIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
+    if (testimonials.length === 0) return;
     setDirection(-1);
     setCurrentIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
   };
@@ -90,7 +99,7 @@ const Testimonials = () => {
                   className="testimonial-card glass-panel"
                 >
                   <div className="quote-badge">
-                    <Quote size={24} fill="#c5a059" color="#c5a059" />
+                    <Quote size={24} fill="#00f2ff" color="#00f2ff" />
                   </div>
                   
                   <StarRating rating={testimonials[currentIndex]?.rating || 5} />
@@ -139,8 +148,7 @@ const Testimonials = () => {
           </div>
         ) : (
           <div className="loading-state">
-            <div className="loader-ring"></div>
-            <p>Loading testimonials...</p>
+            <p>No testimonials available yet.</p>
           </div>
         )}
       </div>

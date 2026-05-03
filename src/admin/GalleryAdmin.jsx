@@ -1,107 +1,135 @@
 import React, { useState, useEffect } from 'react';
-import { db, storage } from '../firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { Trash2, Plus, X, Upload } from 'lucide-react';
-import imageCompression from 'browser-image-compression';
+import { getGallery, addGalleryItem, deleteGalleryItem } from '../store';
+import { Trash2, Plus, X, Upload, Play } from 'lucide-react';
 
 const GalleryAdmin = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [compressionProgress, setCompressionProgress] = useState(0);
-  
+  const [progress, setProgress] = useState(0);
+
   const [formData, setFormData] = useState({
     title: '',
-    category: 'gates',
-    material: 'MS'
+    category: 'all'
   });
   const [files, setFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
 
   const categories = [
-    { id: 'all', label: 'All Projects' },
-    { id: 'gates', label: 'Gates & Fences' },
-    { id: 'sheds', label: 'Industrial Sheds' },
-    { id: 'railings', label: 'Stair Railings' },
-    { id: 'custom', label: 'Custom Fabrication' }
+    { id: 'all',      label: 'All Products' },
+    { id: 'flat',     label: 'Flats' },
+    { id: 'roundbar', label: 'Round Bar' },
+    { id: 'roundrod', label: 'Round Rod' },
+    { id: 'square',   label: 'Square' }
   ];
 
-  const materials = ['MS', 'SS', 'Aluminium', 'Wood'];
-
-  const fetchImages = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'gallery'));
-      setImages(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    } catch (error) { console.error(error); }
-    finally { setLoading(false); }
+  const loadImages = () => {
+    setImages(getGallery());
+    setLoading(false);
   };
 
-  useEffect(() => { fetchImages(); }, []);
+  const loadData = () => {
+    setImages(getGallery());
+    setLoading(false);
+  };
+
+  useEffect(() => { loadData(); }, []);
 
   const openModal = () => {
-    setFormData({ title: '', category: 'gates', material: 'MS' });
+    setFormData({ title: '', category: 'all' });
     setFiles([]);
+    setPreviews([]);
+    setProgress(0);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setFiles([]);
-    setCompressionProgress(0);
+    setPreviews([]);
+    setProgress(0);
   };
 
   const handleFileChange = (e) => {
-    if (e.target.files) setFiles(Array.from(e.target.files));
+    if (!e.target.files) return;
+    const selected = Array.from(e.target.files);
+    setFiles(selected);
+    // Generate previews
+    const urls = selected.map(f => URL.createObjectURL(f));
+    setPreviews(urls);
+  };
+
+
+  const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+  const isVideo = (file) => file.type.startsWith('video/');
+
+  // Upload a single file to Cloudinary (image or video) and return secure URL
+  const uploadToCloudinary = async (file) => {
+    const resourceType = isVideo(file) ? 'video' : 'image';
+    const data = new FormData();
+    data.append('file', file);
+    data.append('upload_preset', UPLOAD_PRESET);
+    data.append('folder', 'jds-gallery');
+    data.append('resource_type', resourceType);
+
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, {
+      method: 'POST',
+      body: data,
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'Cloudinary upload failed');
+    }
+
+    const json = await res.json();
+    return json.secure_url;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (files.length === 0) return alert("Select images");
+    if (files.length === 0) return alert('Please select at least one image.');
     setUploading(true);
+    setProgress(0);
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const options = { maxSizeMB: 0.2, maxWidthOrHeight: 1280, useWebWorker: true, fileType: 'image/webp' };
-        const optimized = await imageCompression(file, options);
-        setCompressionProgress(Math.round(((i + 1) / files.length) * 100));
-
-        const sRef = ref(storage, `gallery/${Date.now()}_${i}.webp`);
-        await uploadBytes(sRef, optimized);
-        const url = await getDownloadURL(sRef);
-
-        await addDoc(collection(db, 'gallery'), {
+        const secureUrl = await uploadToCloudinary(file);
+        addGalleryItem({
           title: formData.title || file.name.split('.')[0],
           category: formData.category,
-          material: formData.material,
-          imageUrl: url,
-          storagePath: sRef.fullPath,
-          timestamp: new Date()
+          imageUrl: secureUrl,
+          mediaType: isVideo(file) ? 'video' : 'image',
         });
+        setProgress(Math.round(((i + 1) / files.length) * 100));
       }
       closeModal();
-      fetchImages();
-    } catch (error) { alert(error.message); }
-    finally { setUploading(false); }
+      loadImages();
+    } catch (err) {
+      alert('Upload error: ' + err.message);
+    } finally {
+      setUploading(false);
+    }
   };
 
-  const handleDelete = async (item) => {
+
+  const handleDelete = (id) => {
     if (!window.confirm('Delete this image?')) return;
-    try {
-      if (item.storagePath) await deleteObject(ref(storage, item.storagePath));
-      await deleteDoc(doc(db, 'gallery', item.id));
-      fetchImages();
-    } catch (error) { alert('Error deleting'); }
+    deleteGalleryItem(id);
+    loadImages();
   };
 
-  if (loading) return <div style={{color: 'white'}}>Loading gallery...</div>;
+  if (loading) return <div style={{ color: 'white' }}>Loading gallery...</div>;
 
   return (
     <div>
       <div style={{
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         marginBottom: '2rem',
         flexWrap: 'wrap',
         gap: '1rem'
@@ -110,17 +138,31 @@ const GalleryAdmin = () => {
         <button onClick={openModal} style={styles.addBtn}><Plus size={20} /> Upload Image(s)</button>
       </div>
 
+      {images.length === 0 && (
+        <div style={{ color: '#94a3b8', textAlign: 'center', padding: '4rem 0' }}>
+          <Upload size={40} style={{ opacity: 0.3, marginBottom: '1rem' }} />
+          <p>No images yet. Click "Upload Image(s)" to add your first project photo.</p>
+        </div>
+      )}
+
       <div style={styles.grid}>
         {images.map(item => (
           <div key={item.id} style={styles.card}>
             <div style={styles.imgContainer}>
-              <img src={item.imageUrl} alt={item.title} style={styles.img} />
-              <div style={styles.imgOverlay}>
-                <button onClick={() => handleDelete(item)} style={styles.deleteBtn}><Trash2 size={20} /></button>
-              </div>
+              {item.mediaType === 'video' ? (
+                <>
+                  <video src={item.imageUrl} style={styles.img} muted preload="metadata" />
+                  <div style={styles.playBadge}><Play size={22} fill="#fff" /></div>
+                </>
+              ) : (
+                <img src={item.imageUrl} alt={item.title} style={styles.img} />
+              )}
+              <button onClick={() => handleDelete(item.id)} style={styles.deleteBtnVisible} title="Delete">
+                <Trash2 size={16} />
+              </button>
             </div>
             <div style={styles.cardInfo}>
-              <span style={styles.badge}>{item.category} • {item.material}</span>
+              <span style={styles.badge}>{item.mediaType === 'video' ? '🎬 video' : item.category}</span>
               <h3 style={styles.cardTitle}>{item.title}</h3>
             </div>
           </div>
@@ -131,31 +173,71 @@ const GalleryAdmin = () => {
         <div style={styles.modalOverlay}>
           <div style={styles.modal}>
             <div style={styles.modalHeader}>
-              <h3>Upload & Optimize</h3>
+              <h3 style={{ color: '#fff', margin: 0 }}>Upload Images</h3>
               <button onClick={closeModal} style={styles.closeBtn}><X size={24} /></button>
             </div>
             <form onSubmit={handleSubmit} style={styles.form}>
+
+              {/* File picker */}
               <div style={styles.fileUploadArea}>
-                <input type="file" accept="image/*" multiple onChange={handleFileChange} style={styles.fileInput} id="file-upload" />
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  multiple
+                  onChange={handleFileChange}
+                  style={styles.fileInput}
+                  id="file-upload"
+                />
                 <label htmlFor="file-upload" style={styles.fileLabel}>
-                  <Upload size={32} style={{marginBottom: '0.5rem', color: '#c5a059'}} />
-                  <span>{files.length > 0 ? `${files.length} images selected` : 'Select images'}</span>
+                  <Upload size={32} style={{ marginBottom: '0.5rem', color: 'var(--accent-primary)' }} />
+                  <span style={{ color: '#e2e8f0' }}>
+                    {files.length > 0 ? `${files.length} file(s) selected` : 'Click to select images or videos'}
+                  </span>
+                  <span style={{ color: '#475569', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                    JPG, PNG, WebP · MP4, MOV, WebM
+                  </span>
                 </label>
               </div>
+
+              {/* Thumbnails preview */}
+              {previews.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {files.map((file, i) => (
+                    file.type.startsWith('video/') ? (
+                      <div key={i} style={{ position: 'relative', width: 72, height: 72, borderRadius: 8, background: '#0f172a', border: '2px solid rgba(0,242,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Play size={20} color="#00f2ff" fill="#00f2ff" />
+                      </div>
+                    ) : (
+                      <img key={i} src={previews[i]} alt="" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8, border: '2px solid rgba(0,242,255,0.4)' }} />
+                    )
+                  ))}
+                </div>
+              )}
+
               <div style={styles.inputGroup}>
                 <label style={styles.label}>Category</label>
-                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={styles.input}>
-                  {categories.filter(c => c.id !== 'all').map(cat => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
+                <select
+                  value={formData.category}
+                  onChange={e => setFormData({ ...formData, category: e.target.value })}
+                  style={styles.input}
+                >
+                  {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
                 </select>
               </div>
+
               <div style={styles.inputGroup}>
-                <label style={styles.label}>Material</label>
-                <select value={formData.material} onChange={e => setFormData({...formData, material: e.target.value})} style={styles.input}>
-                  {materials.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
+                <label style={styles.label}>Title (optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Modern Swing Gate"
+                  value={formData.title}
+                  onChange={e => setFormData({ ...formData, title: e.target.value })}
+                  style={styles.input}
+                />
               </div>
+
               <button type="submit" style={styles.saveBtn} disabled={uploading}>
-                {uploading ? `Processing... ${compressionProgress}%` : 'Optimize & Upload'}
+                {uploading ? `Uploading to Cloudinary... ${progress}%` : 'Save to Gallery'}
               </button>
             </form>
           </div>
@@ -166,30 +248,36 @@ const GalleryAdmin = () => {
 };
 
 const styles = {
-  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' },
   title: { color: '#fff', margin: 0 },
-  addBtn: { display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem', background: '#c5a059', color: '#000', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' },
+  addBtn: { display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem', background: 'var(--accent-primary)', color: '#000', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' },
   card: { background: '#1a1a1f', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', overflow: 'hidden' },
   imgContainer: { position: 'relative', height: '200px' },
   img: { width: '100%', height: '100%', objectFit: 'cover' },
-  imgOverlay: { position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'flex-end', padding: '0.5rem' },
+  imgOverlay: { position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'flex-end', padding: '0.5rem', opacity: 0, transition: 'opacity 0.2s ease' },
   deleteBtn: { background: '#ef4444', color: '#fff', border: 'none', padding: '0.5rem', borderRadius: '6px', cursor: 'pointer' },
+  deleteBtnVisible: { position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'rgba(239,68,68,0.9)', color: '#fff', border: 'none', width: 32, height: 32, borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.4)' },
+  playBadge: { position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.35)', pointerEvents: 'none' },
   cardInfo: { padding: '1rem' },
-  badge: { background: 'rgba(197, 160, 89, 0.15)', color: '#c5a059', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600', marginBottom: '0.5rem', display: 'inline-block' },
-  cardTitle: { color: '#fff', margin: 0, fontSize: '1rem' },
-  modalOverlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 },
-  modal: { background: '#1a1a1f', width: '100%', maxWidth: '500px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' },
-  modalHeader: { display: 'flex', justifyContent: 'space-between', padding: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#fff' },
+  badge: { background: 'rgba(0, 242, 255, 0.15)', color: 'var(--accent-primary)', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600', marginBottom: '0.5rem', display: 'inline-block' },
+  cardTitle: { color: '#fff', margin: '0.5rem 0 0', fontSize: '1rem' },
+  modalOverlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '1rem' },
+  modal: { background: '#1a1a1f', width: '100%', maxWidth: '520px', borderRadius: '16px', border: '1px solid rgba(0,242,255,0.2)', maxHeight: '90vh', overflowY: 'auto' },
+  modalHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' },
   closeBtn: { background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' },
   form: { padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' },
-  fileUploadArea: { border: '2px dashed rgba(197, 160, 89, 0.5)', borderRadius: '8px', padding: '2rem', textAlign: 'center', background: 'rgba(197, 160, 89, 0.05)', position: 'relative' },
-  fileInput: { position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' },
-  fileLabel: { display: 'flex', flexDirection: 'column', alignItems: 'center', color: '#e2e8f0' },
+  fileUploadArea: { border: '2px dashed rgba(0, 242, 255, 0.5)', borderRadius: '10px', padding: '2rem', textAlign: 'center', background: 'rgba(0, 242, 255, 0.04)', position: 'relative', cursor: 'pointer' },
+  fileInput: { position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', zIndex: 2 },
+  fileLabel: { display: 'flex', flexDirection: 'column', alignItems: 'center', pointerEvents: 'none' },
   inputGroup: { display: 'flex', flexDirection: 'column', gap: '0.5rem' },
   label: { color: '#94a3b8', fontSize: '0.9rem' },
-  input: { padding: '0.8rem', borderRadius: '6px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' },
-  saveBtn: { padding: '1rem', background: '#c5a059', color: '#000', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }
+  input: { padding: '0.8rem', borderRadius: '6px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', outline: 'none' },
+  saveBtn: { padding: '1rem', background: 'var(--accent-primary)', color: '#000', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', fontSize: '1rem' }
 };
+
+// Add hover effect for img overlay via CSS
+const hoverStyle = document.createElement('style');
+hoverStyle.innerText = `.gallery-card:hover .img-overlay { opacity: 1 !important; }`;
+document.head.appendChild(hoverStyle);
 
 export default GalleryAdmin;

@@ -5,26 +5,26 @@ import gsap from 'gsap';
 import './Intro.css';
 
 const AnimatedLogo = () => {
-  const vRef = useRef();
-  const gRef = useRef();
-  const wRef = useRef();
+  const jRef = useRef();
+  const dRef = useRef();
+  const sRef = useRef();
   const lightRef = useRef();
 
   useEffect(() => {
-    gsap.set(vRef.current.position, { x: -5, y: 5, z: -5 });
-    gsap.set(vRef.current.rotation, { x: Math.PI, y: Math.PI / 2, z: 0 });
-    gsap.set(gRef.current.position, { x: 0, y: -5, z: -2 });
-    gsap.set(gRef.current.rotation, { x: -Math.PI / 2, y: 0, z: Math.PI });
-    gsap.set(wRef.current.position, { x: 5, y: 5, z: -8 });
-    gsap.set(wRef.current.rotation, { x: 0, y: -Math.PI, z: -Math.PI / 2 });
+    gsap.set(jRef.current.position, { x: -5, y: 5, z: -5 });
+    gsap.set(jRef.current.rotation, { x: Math.PI, y: Math.PI / 2, z: 0 });
+    gsap.set(dRef.current.position, { x: 0, y: -5, z: -2 });
+    gsap.set(dRef.current.rotation, { x: -Math.PI / 2, y: 0, z: Math.PI });
+    gsap.set(sRef.current.position, { x: 5, y: 5, z: -8 });
+    gsap.set(sRef.current.rotation, { x: 0, y: -Math.PI, z: -Math.PI / 2 });
     gsap.set(lightRef.current.position, { x: -10, y: 0, z: 2 });
 
     const tl = gsap.timeline();
-    tl.to([vRef.current.position, gRef.current.position, wRef.current.position], {
+    tl.to([jRef.current.position, dRef.current.position, sRef.current.position], {
       x: (i) => [-1.5, 0, 1.8][i], y: 0, z: 0,
       duration: 1.2, ease: 'power3.out', stagger: 0.1
     }, 0);
-    tl.to([vRef.current.rotation, gRef.current.rotation, wRef.current.rotation], {
+    tl.to([jRef.current.rotation, dRef.current.rotation, sRef.current.rotation], {
       x: 0, y: 0, z: 0, duration: 1.2, ease: 'power3.out', stagger: 0.1
     }, 0);
     tl.to(lightRef.current.position, { x: 10, duration: 1.5, ease: 'power2.inOut' }, 0.8);
@@ -36,18 +36,18 @@ const AnimatedLogo = () => {
   return (
     <group>
       <ambientLight intensity={0.2} />
-      <pointLight ref={lightRef} color="#FF6B00" intensity={50} distance={15} />
+      <pointLight ref={lightRef} color="#00F2FF" intensity={50} distance={15} />
       <Environment preset="night" />
-      <Sparkles count={100} scale={10} size={4} speed={0.4} opacity={0.5} color="#FF6B00" />
+      <Sparkles count={100} scale={10} size={4} speed={0.4} opacity={0.5} color="#00F2FF" />
       <Sparkles count={50}  scale={12} size={2} speed={0.2} opacity={0.3} color="#a0aabf" />
-      <Text ref={vRef} fontSize={2.5} anchorX="center" anchorY="middle" fontWeight="bold">
-        V<meshStandardMaterial metalness={1} roughness={0.2} color="#C5A059" />
+      <Text ref={jRef} fontSize={2.5} anchorX="center" anchorY="middle" fontWeight="bold">
+        J<meshStandardMaterial metalness={1} roughness={0.2} color="#00F2FF" />
       </Text>
-      <Text ref={gRef} fontSize={2.5} anchorX="center" anchorY="middle" fontWeight="bold">
-        G<meshStandardMaterial metalness={1} roughness={0.2} color="#C5A059" />
+      <Text ref={dRef} fontSize={2.5} anchorX="center" anchorY="middle" fontWeight="bold">
+        D<meshStandardMaterial metalness={1} roughness={0.2} color="#00F2FF" />
       </Text>
-      <Text ref={wRef} fontSize={2.5} anchorX="center" anchorY="middle" fontWeight="bold">
-        W<meshStandardMaterial metalness={1} roughness={0.2} color="#C5A059" />
+      <Text ref={sRef} fontSize={2.5} anchorX="center" anchorY="middle" fontWeight="bold">
+        S<meshStandardMaterial metalness={1} roughness={0.2} color="#00F2FF" />
       </Text>
     </group>
   );
@@ -67,7 +67,7 @@ const IntroDesktop = ({ fadingOut }) => (
       <AnimatedLogo />
     </Canvas>
     <div className="intro-overlay">
-      <h1 className="intro-subtitle">Velmurugan Grill Works</h1>
+      <h1 className="intro-subtitle">JDS Iron and Steels</h1>
       <p className="intro-tagline">Built with Strength. Designed with Precision.</p>
     </div>
   </div>

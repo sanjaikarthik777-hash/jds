@@ -1,8 +1,8 @@
 .trust-section {
   padding: 4rem 0;
   background: linear-gradient(90deg, var(--bg-tertiary), var(--bg-secondary));
-  border-top: 1px solid rgba(255, 107, 0, 0.2);
-  border-bottom: 1px solid rgba(255, 107, 0, 0.2);
+  border-top: 1px solid rgba(0, 242, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 242, 255, 0.2);
 }
 
 .trust-grid {
@@ -14,7 +14,7 @@
 
 .trust-item h3 {
   font-size: 3.5rem;
-  color: var(--accent-orange);
+  color: var(--accent-primary);
   margin-bottom: 0.5rem;
   text-shadow: 0 0 15px var(--accent-glow);
   display: flex;

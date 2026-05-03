@@ -43,7 +43,7 @@ const TrustElements = () => {
           
           <div className="trust-item">
             <h3 className="counter">
-              <span className="counter-val" data-target="10">0</span>+
+              <span className="counter-val" data-target="20">0</span>+
             </h3>
             <p>Years Experience</p>
           </div>
